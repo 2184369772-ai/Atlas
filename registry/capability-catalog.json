@@ -1,5 +1,5 @@
 {
-  "catalog_version": "atlas-public-0.3.0-alpha",
+  "catalog_version": "atlas-public-0.4.0-alpha",
   "capabilities": [
     {
       "id": "ai-execution",
@@ -47,6 +47,23 @@
       "reference_only": "Yes",
       "forbidden_as_ready_made_call": "Yes",
       "notes": "Candidate only. Public distribution does not promote it to a stable runtime package."
+    },
+    {
+      "id": "knowledge-intake",
+      "name": "Knowledge Intake",
+      "aliases": [
+        "knowledge intake",
+        "knowledge source",
+        "citation provenance",
+        "retrieval evidence"
+      ],
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
+      "recommendation": "REFERENCE_ONLY",
+      "use_via": "packages/knowledge-intake with a project-side parser/retrieval adapter",
+      "can_use_now": "Yes, as a reference implementation for source identity, source-unit linkage, citation/provenance, retrieval evidence, conflicts, and human-review signal",
+      "reference_only": "Yes",
+      "forbidden_as_ready_made_call": "Yes",
+      "notes": "Atlas Knowledge Intake covers source identity, version/status, knowledge unit to source linkage, citation/provenance, retrieval evidence, issue/conflict, and human-review signal. OCR/parsing, chunking, embedding/vector DB, retrieval/ranking strategy, prompts/LLMs, business knowledge, persistence, and permissions stay in the project. Validated through isolated read-only shadow comparison across multiple real project implementations."
     },
     {
       "id": "operation-outcome",

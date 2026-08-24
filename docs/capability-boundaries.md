@@ -24,6 +24,15 @@
 - Public validation statement: validated through isolated read-only shadow comparison across multiple real project implementations.
 - Public validation does not imply real production model calls.
 
+## Knowledge Intake
+
+- Recommendation: `REFERENCE_ONLY`
+- Governance: `ATLAS CANDIDATE / SHADOW_VALIDATED`
+- Atlas owns source identity, version/status, knowledge unit to source linkage, citation/provenance, retrieval evidence, issue/conflict, and human-review signal.
+- The project adapter owns OCR/parser, chunking, embedding/vector DB, retrieval/ranking strategy, prompts/LLMs, business knowledge, persistence, and permissions.
+- This is not a Stable Module, RAG platform, knowledge base platform, or search engine.
+- Public validation statement: validated through isolated read-only shadow comparison across multiple real project implementations.
+
 ## Runtime Config
 
 - Recommendation: `REFERENCE_ONLY`

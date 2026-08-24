@@ -9,6 +9,7 @@ Use it to:
 - inspect CSV/XLSX files through Atlas Consumer Bridge
 - query the current Enterprise Intake Candidate without upgrading its maturity
 - query the current AI Execution Candidate without upgrading its maturity
+- query the current Knowledge Intake Candidate without upgrading its maturity
 - generate a short public-safe context pack
 
 Commands:
@@ -18,6 +19,7 @@ atlas capability list
 atlas capability show tabular-core
 atlas capability show enterprise-intake
 atlas capability show ai-execution
+atlas capability show knowledge-intake
 atlas project inspect <project-path>
 atlas file inspect <file>
 atlas context

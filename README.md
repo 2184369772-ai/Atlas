@@ -9,7 +9,7 @@ Atlas is not:
 - a Workflow/Auth/RBAC framework
 - a system that automatically learns your codebase
 
-Current public package version: `0.3.0-alpha`
+Current public package version: `0.4.0-alpha`
 
 License: `Apache-2.0`
 
@@ -35,6 +35,7 @@ atlas capability list
 atlas capability show tabular-core
 atlas capability show enterprise-intake
 atlas capability show ai-execution
+atlas capability show knowledge-intake
 ```
 
 5. Inspect your current project:
@@ -54,6 +55,7 @@ atlas context
 - Tabular Core: `CONTROLLED_REUSE`
 - Enterprise Intake: `REFERENCE_ONLY`
 - AI Execution: `REFERENCE_ONLY`
+- Knowledge Intake: `REFERENCE_ONLY`
 - Runtime Config: `REFERENCE_ONLY`
 - File Lifecycle: `REFERENCE_ONLY`
 - Operation Outcome: `SEMANTIC_REFERENCE`
@@ -63,10 +65,12 @@ Current maturity note:
 - Tabular Core is the current most mature public Atlas capability.
 - Enterprise Intake is a shadow-validated Candidate, not a Stable Module.
 - AI Execution is a shadow-validated Candidate, not a Stable Module.
+- Knowledge Intake is a shadow-validated Candidate, not a Stable Module.
 - Runtime Config and File Lifecycle remain reference-only Candidates.
 - Operation Outcome remains a semantic reference, not a shipped package.
 - Enterprise Intake still requires a project-side adapter for duplicate policy, business validation, persistence, transactions, and DB writes.
 - AI Execution still requires a project-side provider adapter for provider calls, prompts, model choice, RAG/Knowledge, retry/timeout behavior, business rules, and persistence.
+- Knowledge Intake still requires a project-side adapter for OCR/parsing, chunking, embedding/vector DB, retrieval/ranking strategy, prompts/LLMs, business knowledge, persistence, and permissions.
 - Atlas does not automatically learn project code.
 - `NO_ATLAS_REUSE` is a normal outcome when Atlas is not a fit.
 
@@ -108,6 +112,26 @@ This example proves:
 
 It does not call an external AI API.
 
+## Knowledge Intake Example
+
+Run the public-safe synthetic example:
+
+```bash
+python examples/knowledge-intake-synthetic/run_example.py
+```
+
+This example proves:
+
+- source identity
+- version/status
+- knowledge unit to source linkage
+- citation/provenance
+- retrieval evidence
+- issue/conflict
+- human-review signal
+
+It does not include private documents, company knowledge, embeddings, vector DBs, prompts, or LLM calls.
+
 ## Codex Skill
 
 If you use Codex, Atlas also ships a local skill:
@@ -136,6 +160,7 @@ Current real limitation:
 - `atlas capability show tabular-core`
 - `atlas capability show enterprise-intake`
 - `atlas capability show ai-execution`
+- `atlas capability show knowledge-intake`
 - `atlas project inspect <project-path>`
 - `atlas file inspect <file>`
 - `atlas context`

@@ -13,6 +13,7 @@ pip install -e .
 atlas capability list
 atlas capability show enterprise-intake
 atlas capability show ai-execution
+atlas capability show knowledge-intake
 atlas project inspect .
 ```
 
@@ -44,3 +45,11 @@ python examples/ai-execution-synthetic/run_example.py
 ```
 
 This example uses only a synthetic provider adapter.
+
+## Knowledge Intake Example
+
+```bash
+python examples/knowledge-intake-synthetic/run_example.py
+```
+
+This example uses only synthetic sources and retrieval evidence.

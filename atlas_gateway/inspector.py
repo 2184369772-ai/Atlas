@@ -148,6 +148,15 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
                 confidence="LOW",
             )
         )
+    if has_knowledge_intake_signal(files):
+        signals.append(
+            ProjectSignal(
+                capability_id="knowledge-intake",
+                detected_signal="Knowledge source, version, citation, retrieval evidence, or human-review patterns detected.",
+                reason="Knowledge Intake is only the source/provenance/evidence semantics around project-owned parsers, retrieval, vector stores, prompts, and persistence.",
+                confidence="LOW",
+            )
+        )
     if has_file_lifecycle_signal(files):
         signals.append(
             ProjectSignal(
@@ -258,6 +267,32 @@ def has_ai_execution_signal(files: list[Path]) -> bool:
         if content:
             lowered = content.lower()
             if sum(1 for token in keywords if token in lowered) >= 2:
+                return True
+    return False
+
+
+def has_knowledge_intake_signal(files: list[Path]) -> bool:
+    keywords = (
+        "knowledge_documents",
+        "knowledge_versions",
+        "knowledge_chunks",
+        "source_ref",
+        "source_quality",
+        "citation",
+        "citations",
+        "retrieval",
+        "evidence_conflict",
+        "missing_key_evidence",
+        "human_review",
+    )
+    for path in files:
+        lower_name = path.name.lower()
+        if "knowledge" in lower_name and any(token in lower_name for token in ("source", "chunk", "retrieval", "citation")):
+            return True
+        content = read_text_if_supported(path)
+        if content:
+            lowered = content.lower()
+            if sum(1 for token in keywords if token in lowered) >= 3:
                 return True
     return False
 

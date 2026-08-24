@@ -1,6 +1,6 @@
 {
   "generator": "Atlas Public Packaging v0.1",
-  "public_version": "0.3.0-alpha",
+  "public_version": "0.4.0-alpha",
   "license": "Apache-2.0",
   "release_blocker": null,
   "source_repo": "internal Atlas training/development repository",
@@ -9,14 +9,18 @@
     "atlas_consumer",
     "packages/ai-execution/src/atlas_ai_execution",
     "packages/enterprise-intake/src/atlas_enterprise_intake",
+    "packages/knowledge-intake/src/atlas_knowledge_intake",
     "packages/tabular-input/src/atlas_tabular",
     "examples/ai-execution-synthetic",
     "examples/enterprise-intake-synthetic",
+    "examples/knowledge-intake-synthetic",
     "skills/atlas-gateway",
     "tests/test_ai_execution_public.py",
     "tests/test_enterprise_intake_public.py",
+    "tests/test_knowledge_intake_public.py",
     "tests/fixtures/project_ai_execution",
     "tests/fixtures/project_enterprise_intake",
+    "tests/fixtures/project_knowledge_intake",
     "tests/fixtures/project_tabular",
     "tests/fixtures/project_no_reuse"
   ]
