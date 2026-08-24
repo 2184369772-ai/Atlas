@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atlas-framework"
+version = "0.1.0-alpha"
+description = "Experimental framework that helps AI and Codex discover and reuse validated engineering capabilities in software projects."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+dependencies = [
+  "openpyxl>=3.1,<4",
+]
+
+[project.scripts]
+atlas = "atlas_gateway.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["atlas_gateway*", "atlas_consumer*"]

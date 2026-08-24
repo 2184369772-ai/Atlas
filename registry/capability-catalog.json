@@ -1,0 +1,62 @@
+{
+  "catalog_version": "atlas-public-0.1.0-alpha",
+  "capabilities": [
+    {
+      "id": "file-lifecycle",
+      "name": "File Lifecycle",
+      "aliases": [
+        "file lifecycle"
+      ],
+      "governance_status": "ATLAS CANDIDATE",
+      "recommendation": "REFERENCE_ONLY",
+      "use_via": "Reference for adapter or project-specific design",
+      "can_use_now": "No",
+      "reference_only": "Yes",
+      "forbidden_as_ready_made_call": "Yes",
+      "notes": "Candidate only. Public distribution does not promote it to a stable runtime package."
+    },
+    {
+      "id": "operation-outcome",
+      "name": "Operation Outcome",
+      "aliases": [
+        "operation outcome"
+      ],
+      "governance_status": "SEMANTIC CANDIDATE ONLY / NO PACKAGE",
+      "recommendation": "SEMANTIC_REFERENCE",
+      "use_via": "Semantic reference only",
+      "can_use_now": "No",
+      "reference_only": "Yes",
+      "forbidden_as_ready_made_call": "Yes",
+      "notes": "Semantic reference only. No standalone package is shipped in this public distribution."
+    },
+    {
+      "id": "runtime-config",
+      "name": "Runtime Config",
+      "aliases": [
+        "runtime config"
+      ],
+      "governance_status": "ATLAS CANDIDATE",
+      "recommendation": "REFERENCE_ONLY",
+      "use_via": "Reference for adapter or project-specific design",
+      "can_use_now": "No",
+      "reference_only": "Yes",
+      "forbidden_as_ready_made_call": "Yes",
+      "notes": "Candidate only. Public distribution does not promote it to a stable runtime package."
+    },
+    {
+      "id": "tabular-core",
+      "name": "Tabular Core",
+      "aliases": [
+        "tabular",
+        "tabular core"
+      ],
+      "governance_status": "ATLAS CANDIDATE / FROZEN AS V2 INTERNAL BASELINE",
+      "recommendation": "CONTROLLED_REUSE",
+      "use_via": "Atlas Consumer Bridge or Tabular Core",
+      "can_use_now": "Yes, within frozen read-only tabular scope",
+      "reference_only": "No",
+      "forbidden_as_ready_made_call": "No",
+      "notes": "This is the narrowest and most validated Atlas capability. Keep business rules and persistence in the project."
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Atlas Gateway"
+  short_description: "Atlas reuse routing for software projects"
+  default_prompt: "Use $atlas-gateway to decide whether Atlas should be checked for this software project."

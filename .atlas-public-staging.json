@@ -1,0 +1,15 @@
+{
+  "generator": "Atlas Public Packaging v0.1",
+  "public_version": "0.1.0-alpha",
+  "license": "Apache-2.0",
+  "release_blocker": null,
+  "source_repo": "internal Atlas training/development repository",
+  "allowlist_entries": [
+    "atlas_gateway",
+    "atlas_consumer",
+    "packages/tabular-input/src/atlas_tabular",
+    "skills/atlas-gateway",
+    "tests/fixtures/project_tabular",
+    "tests/fixtures/project_no_reuse"
+  ]
+}
