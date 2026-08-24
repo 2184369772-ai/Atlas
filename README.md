@@ -9,7 +9,7 @@ Atlas is not:
 - a Workflow/Auth/RBAC framework
 - a system that automatically learns your codebase
 
-Current public package version: `0.2.0-alpha`
+Current public package version: `0.3.0-alpha`
 
 License: `Apache-2.0`
 
@@ -34,6 +34,7 @@ pip install -e .
 atlas capability list
 atlas capability show tabular-core
 atlas capability show enterprise-intake
+atlas capability show ai-execution
 ```
 
 5. Inspect your current project:
@@ -52,6 +53,7 @@ atlas context
 
 - Tabular Core: `CONTROLLED_REUSE`
 - Enterprise Intake: `REFERENCE_ONLY`
+- AI Execution: `REFERENCE_ONLY`
 - Runtime Config: `REFERENCE_ONLY`
 - File Lifecycle: `REFERENCE_ONLY`
 - Operation Outcome: `SEMANTIC_REFERENCE`
@@ -60,9 +62,11 @@ Current maturity note:
 
 - Tabular Core is the current most mature public Atlas capability.
 - Enterprise Intake is a shadow-validated Candidate, not a Stable Module.
+- AI Execution is a shadow-validated Candidate, not a Stable Module.
 - Runtime Config and File Lifecycle remain reference-only Candidates.
 - Operation Outcome remains a semantic reference, not a shipped package.
 - Enterprise Intake still requires a project-side adapter for duplicate policy, business validation, persistence, transactions, and DB writes.
+- AI Execution still requires a project-side provider adapter for provider calls, prompts, model choice, RAG/Knowledge, retry/timeout behavior, business rules, and persistence.
 - Atlas does not automatically learn project code.
 - `NO_ATLAS_REUSE` is a normal outcome when Atlas is not a fit.
 
@@ -83,6 +87,26 @@ This example proves:
 - commit readiness
 
 It does not write to a database.
+
+## AI Execution Example
+
+Run the public-safe synthetic example:
+
+```bash
+python examples/ai-execution-synthetic/run_example.py
+```
+
+This example proves:
+
+- synthetic request
+- synthetic provider adapter
+- success and failure normalization
+- fallback signal
+- confidence and risk extraction
+- human escalation
+- `AIExecutionResult`
+
+It does not call an external AI API.
 
 ## Codex Skill
 
@@ -111,6 +135,7 @@ Current real limitation:
 - `atlas capability list`
 - `atlas capability show tabular-core`
 - `atlas capability show enterprise-intake`
+- `atlas capability show ai-execution`
 - `atlas project inspect <project-path>`
 - `atlas file inspect <file>`
 - `atlas context`

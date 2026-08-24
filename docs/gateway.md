@@ -8,6 +8,7 @@ Use it to:
 - inspect a software project conservatively
 - inspect CSV/XLSX files through Atlas Consumer Bridge
 - query the current Enterprise Intake Candidate without upgrading its maturity
+- query the current AI Execution Candidate without upgrading its maturity
 - generate a short public-safe context pack
 
 Commands:
@@ -16,6 +17,7 @@ Commands:
 atlas capability list
 atlas capability show tabular-core
 atlas capability show enterprise-intake
+atlas capability show ai-execution
 atlas project inspect <project-path>
 atlas file inspect <file>
 atlas context

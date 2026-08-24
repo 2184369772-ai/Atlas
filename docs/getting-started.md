@@ -12,6 +12,7 @@ pip install -e .
 ```bash
 atlas capability list
 atlas capability show enterprise-intake
+atlas capability show ai-execution
 atlas project inspect .
 ```
 
@@ -35,3 +36,11 @@ The generated context pack is designed to be public-safe and shareable with Code
 ```bash
 python examples/enterprise-intake-synthetic/run_example.py
 ```
+
+## AI Execution Example
+
+```bash
+python examples/ai-execution-synthetic/run_example.py
+```
+
+This example uses only a synthetic provider adapter.

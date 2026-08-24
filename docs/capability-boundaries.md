@@ -14,6 +14,16 @@
 - Keep duplicate policy, business validation, persistence, transaction handling, and DB writes in the project adapter.
 - This is not a Stable Module and not a universal import framework.
 
+## AI Execution
+
+- Recommendation: `REFERENCE_ONLY`
+- Governance: `ATLAS CANDIDATE / SHADOW_VALIDATED`
+- Atlas owns execution request/result semantics, failure normalization, fallback signal, evidence reference, confidence/risk, human escalation, trace, and outcome.
+- The project adapter owns provider calls, provider request/response formats, retry/timeout implementation, prompts, model choice, RAG/Knowledge, business rules, and persistence.
+- This is not a Stable Module, AI Agent platform, prompt framework, RAG framework, model SDK replacement, or workflow system.
+- Public validation statement: validated through isolated read-only shadow comparison across multiple real project implementations.
+- Public validation does not imply real production model calls.
+
 ## Runtime Config
 
 - Recommendation: `REFERENCE_ONLY`

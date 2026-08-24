@@ -1,6 +1,23 @@
 {
-  "catalog_version": "atlas-public-0.2.0-alpha",
+  "catalog_version": "atlas-public-0.3.0-alpha",
   "capabilities": [
+    {
+      "id": "ai-execution",
+      "name": "AI Execution",
+      "aliases": [
+        "ai execution",
+        "ai result",
+        "provider fallback",
+        "human escalation"
+      ],
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
+      "recommendation": "REFERENCE_ONLY",
+      "use_via": "packages/ai-execution with a project-side provider adapter",
+      "can_use_now": "Yes, as a reference implementation for execution request/result semantics and normalized failure handling",
+      "reference_only": "Yes",
+      "forbidden_as_ready_made_call": "Yes",
+      "notes": "Atlas AI Execution covers execution request/result, failure normalization, fallback signal, evidence reference, confidence/risk, human escalation, trace, and outcome. Provider calls, request/response formats, retry/timeout implementation, prompts, model choice, RAG/Knowledge, business rules, and persistence stay in the project adapter. Validated through isolated read-only shadow comparison across multiple real project implementations without implying production model calls."
+    },
     {
       "id": "enterprise-intake",
       "name": "Enterprise Intake",

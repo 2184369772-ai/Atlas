@@ -139,6 +139,15 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
                 confidence="LOW",
             )
         )
+    if has_ai_execution_signal(files):
+        signals.append(
+            ProjectSignal(
+                capability_id="ai-execution",
+                detected_signal="AI provider invocation, timeout, structured result, fallback, or escalation patterns detected.",
+                reason="AI Execution is only the execution-result layer around project-owned AI behavior. Reuse still requires a provider adapter and project-owned prompts, persistence, and human workflow.",
+                confidence="LOW",
+            )
+        )
     if has_file_lifecycle_signal(files):
         signals.append(
             ProjectSignal(
@@ -220,6 +229,30 @@ def has_enterprise_intake_signal(files: list[Path]) -> bool:
     for path in files:
         lower_name = path.name.lower()
         if "import" in lower_name and any(token in lower_name for token in ("batch", "issue", "preview", "trace")):
+            return True
+        content = read_text_if_supported(path)
+        if content:
+            lowered = content.lower()
+            if sum(1 for token in keywords if token in lowered) >= 2:
+                return True
+    return False
+
+
+def has_ai_execution_signal(files: list[Path]) -> bool:
+    keywords = (
+        "chat/completions",
+        "response_format",
+        "model_api_key",
+        "ai_api_key",
+        "model_unavailable",
+        "safe-fallback",
+        "manual_required",
+        "escalation_reasons",
+        "confidence",
+    )
+    for path in files:
+        lower_name = path.name.lower()
+        if lower_name in {"model_provider.py", "ai_service.py", "ai_.py"}:
             return True
         content = read_text_if_supported(path)
         if content:
