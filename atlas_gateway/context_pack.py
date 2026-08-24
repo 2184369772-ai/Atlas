@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .catalog import list_capabilities
+from .catalog import list_capabilities, load_catalog
 
 
 def build_context_markdown() -> str:
+    catalog = load_catalog()
     capabilities = list_capabilities()
     lines = [
         "# ATLAS_CONTEXT",
@@ -17,7 +18,7 @@ def build_context_markdown() -> str:
         "",
         "## Current Position",
         "",
-        "- Version: Atlas Gateway v0.1",
+        f"- Version: {catalog.get('catalog_version', 'atlas-gateway-v0.1')}",
         "- Scope: local CLI only",
         "- Public-safe default: yes",
         "- Core rule: Atlas recommendations must stay conservative and may explicitly return `NO_ATLAS_REUSE`.",

@@ -130,6 +130,15 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
                 confidence="LOW",
             )
         )
+    if has_enterprise_intake_signal(files):
+        signals.append(
+            ProjectSignal(
+                capability_id="enterprise-intake",
+                detected_signal="Import preview, row decision, duplicate handling, or import issue patterns detected.",
+                reason="Enterprise Intake is only the middle layer between Tabular Core and project-side writes. Reuse still requires a project adapter and caller-owned persistence boundary.",
+                confidence="LOW",
+            )
+        )
     if has_file_lifecycle_signal(files):
         signals.append(
             ProjectSignal(
@@ -192,6 +201,31 @@ def has_runtime_config_signal(files: list[Path]) -> bool:
         content = read_text_if_supported(path)
         if content and any(token in content for token in ("os.environ", "getenv(", "process.env", "SPRING_APPLICATION_JSON")):
             return True
+    return False
+
+
+def has_enterprise_intake_signal(files: list[Path]) -> bool:
+    keywords = (
+        "importbatch",
+        "import_issue",
+        "importissue",
+        "source_trace",
+        "sourcetrace",
+        "preview",
+        "idempotent",
+        "duplicate",
+        "skip",
+        "review_required",
+    )
+    for path in files:
+        lower_name = path.name.lower()
+        if "import" in lower_name and any(token in lower_name for token in ("batch", "issue", "preview", "trace")):
+            return True
+        content = read_text_if_supported(path)
+        if content:
+            lowered = content.lower()
+            if sum(1 for token in keywords if token in lowered) >= 2:
+                return True
     return False
 
 

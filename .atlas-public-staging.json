@@ -1,14 +1,18 @@
 {
   "generator": "Atlas Public Packaging v0.1",
-  "public_version": "0.1.0-alpha",
+  "public_version": "0.2.0-alpha",
   "license": "Apache-2.0",
   "release_blocker": null,
   "source_repo": "internal Atlas training/development repository",
   "allowlist_entries": [
     "atlas_gateway",
     "atlas_consumer",
+    "packages/enterprise-intake/src/atlas_enterprise_intake",
     "packages/tabular-input/src/atlas_tabular",
+    "examples/enterprise-intake-synthetic",
     "skills/atlas-gateway",
+    "tests/test_enterprise_intake_public.py",
+    "tests/fixtures/project_enterprise_intake",
     "tests/fixtures/project_tabular",
     "tests/fixtures/project_no_reuse"
   ]

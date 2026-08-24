@@ -9,7 +9,7 @@ Atlas is not:
 - a Workflow/Auth/RBAC framework
 - a system that automatically learns your codebase
 
-Current public package version: `0.1.0-alpha`
+Current public package version: `0.2.0-alpha`
 
 License: `Apache-2.0`
 
@@ -33,6 +33,7 @@ pip install -e .
 ```bash
 atlas capability list
 atlas capability show tabular-core
+atlas capability show enterprise-intake
 ```
 
 5. Inspect your current project:
@@ -50,6 +51,7 @@ atlas context
 ## Current Capabilities
 
 - Tabular Core: `CONTROLLED_REUSE`
+- Enterprise Intake: `REFERENCE_ONLY`
 - Runtime Config: `REFERENCE_ONLY`
 - File Lifecycle: `REFERENCE_ONLY`
 - Operation Outcome: `SEMANTIC_REFERENCE`
@@ -57,10 +59,30 @@ atlas context
 Current maturity note:
 
 - Tabular Core is the current most mature public Atlas capability.
+- Enterprise Intake is a shadow-validated Candidate, not a Stable Module.
 - Runtime Config and File Lifecycle remain reference-only Candidates.
 - Operation Outcome remains a semantic reference, not a shipped package.
+- Enterprise Intake still requires a project-side adapter for duplicate policy, business validation, persistence, transactions, and DB writes.
 - Atlas does not automatically learn project code.
 - `NO_ATLAS_REUSE` is a normal outcome when Atlas is not a fit.
+
+## Enterprise Intake Example
+
+Run the public-safe synthetic example:
+
+```bash
+python examples/enterprise-intake-synthetic/run_example.py
+```
+
+This example proves:
+
+- Tabular input
+- project adapter
+- preview
+- row decision and issues
+- commit readiness
+
+It does not write to a database.
 
 ## Codex Skill
 
@@ -88,6 +110,7 @@ Current real limitation:
 
 - `atlas capability list`
 - `atlas capability show tabular-core`
+- `atlas capability show enterprise-intake`
 - `atlas project inspect <project-path>`
 - `atlas file inspect <file>`
 - `atlas context`

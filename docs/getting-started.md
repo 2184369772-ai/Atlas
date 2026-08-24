@@ -11,6 +11,7 @@ pip install -e .
 
 ```bash
 atlas capability list
+atlas capability show enterprise-intake
 atlas project inspect .
 ```
 
@@ -28,3 +29,9 @@ atlas context --output ATLAS_CONTEXT.md
 ```
 
 The generated context pack is designed to be public-safe and shareable with Codex, ChatGPT, or other AI tools.
+
+## Enterprise Intake Example
+
+```bash
+python examples/enterprise-intake-synthetic/run_example.py
+```

@@ -6,6 +6,14 @@
 - Use when a project needs read-only CSV/XLSX structure and value semantics.
 - Keep business sheet selection, field mapping, validation, workflow, and database writes in the project.
 
+## Enterprise Intake
+
+- Recommendation: `REFERENCE_ONLY`
+- Governance: `ATLAS CANDIDATE / SHADOW_VALIDATED`
+- Use when a project needs tabular preview, row decision, issue aggregation, partial completion, and commit readiness between Tabular Core and project-side writes.
+- Keep duplicate policy, business validation, persistence, transaction handling, and DB writes in the project adapter.
+- This is not a Stable Module and not a universal import framework.
+
 ## Runtime Config
 
 - Recommendation: `REFERENCE_ONLY`

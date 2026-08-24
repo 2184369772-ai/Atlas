@@ -1,6 +1,22 @@
 {
-  "catalog_version": "atlas-public-0.1.0-alpha",
+  "catalog_version": "atlas-public-0.2.0-alpha",
   "capabilities": [
+    {
+      "id": "enterprise-intake",
+      "name": "Enterprise Intake",
+      "aliases": [
+        "enterprise intake",
+        "import preview",
+        "import intake"
+      ],
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
+      "recommendation": "REFERENCE_ONLY",
+      "use_via": "packages/enterprise-intake with a project-side adapter",
+      "can_use_now": "Yes, through the reference implementation and caller-owned persistence boundary",
+      "reference_only": "Yes",
+      "forbidden_as_ready_made_call": "Yes",
+      "notes": "Use this only for the middle intake semantics between Tabular Core and project-side import writes. It is validated through read-only shadow comparison across multiple real projects, but duplicate policy, business validation, persistence, transactions, and DB writes stay in the project."
+    },
     {
       "id": "file-lifecycle",
       "name": "File Lifecycle",

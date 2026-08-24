@@ -1,0 +1,5 @@
+employee_id,hours,manager,comment
+E-001,8,alice,ok
+E-002,0,alice,skip
+E-003,10,,needs review
+E-004,-2,bob,reject
