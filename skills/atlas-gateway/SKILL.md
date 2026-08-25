@@ -23,7 +23,13 @@ For a new or unfamiliar software project, first inspect the project through Gate
 python scripts/run_gateway.py project inspect <project-path> --json
 ```
 
-Use that result before recommending Atlas.
+If Atlas may help, build the adoption plan next:
+
+```powershell
+python scripts/run_gateway.py project plan <project-path> --json
+```
+
+Use these results before recommending Atlas. If Gateway returns `NO_ATLAS_REUSE`, continue normal project work without adding Atlas-specific layers.
 
 ## Gateway Commands
 
@@ -33,6 +39,11 @@ Use the runner script in this skill so Atlas can be located safely:
 python scripts/run_gateway.py capability list
 python scripts/run_gateway.py capability show tabular-core
 python scripts/run_gateway.py project inspect <project-path> --json
+python scripts/run_gateway.py project plan <project-path> --json
+python scripts/run_gateway.py adapter init enterprise-intake --target <project-path>
+python scripts/run_gateway.py adapter init ai-execution --target <project-path>
+python scripts/run_gateway.py adapter init knowledge-intake --target <project-path>
+python scripts/run_gateway.py doctor
 python scripts/run_gateway.py file inspect <file>
 python scripts/run_gateway.py context --output ATLAS_CONTEXT.md
 ```
@@ -69,6 +80,19 @@ If the runner cannot find Atlas Gateway, stop and report the missing location cl
 
 - Accept it and continue normal project work.
 - Do not add Atlas-specific layers just to force reuse.
+
+## Adoption Kit Boundary
+
+Default workflow for a new project:
+
+```text
+project inspect
+-> project plan
+-> adapter init only when the task explicitly requires Atlas adoption
+-> normal project development
+```
+
+Do not automatically write scaffold files into a user project. Use `adapter init` only when the user request or task scope clearly asks to connect Atlas.
 
 ## File Handling Boundary
 

@@ -18,6 +18,8 @@ python skills/atlas-gateway/scripts/run_gateway.py --status
 Real limitations:
 
 - install the skill first
+- new projects should use `project inspect` before `project plan`
+- adapter scaffolds are generated only when the task explicitly asks to connect Atlas
 - a new task or session is more reliable than expecting hot reload
 - Atlas is not guaranteed to trigger for every task
 - the skill still accepts `NO_ATLAS_REUSE`

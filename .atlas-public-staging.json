@@ -1,6 +1,6 @@
 {
   "generator": "Atlas Public Packaging v0.1",
-  "public_version": "0.4.0-alpha",
+  "public_version": "0.5.0-alpha",
   "license": "Apache-2.0",
   "release_blocker": null,
   "source_repo": "internal Atlas training/development repository",
@@ -18,6 +18,7 @@
     "tests/test_ai_execution_public.py",
     "tests/test_enterprise_intake_public.py",
     "tests/test_knowledge_intake_public.py",
+    "tests/test_project_adoption_kit_public.py",
     "tests/fixtures/project_ai_execution",
     "tests/fixtures/project_enterprise_intake",
     "tests/fixtures/project_knowledge_intake",

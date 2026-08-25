@@ -9,7 +9,7 @@ Atlas is not:
 - a Workflow/Auth/RBAC framework
 - a system that automatically learns your codebase
 
-Current public package version: `0.4.0-alpha`
+Current public package version: `0.5.0-alpha`
 
 License: `Apache-2.0`
 
@@ -42,9 +42,24 @@ atlas capability show knowledge-intake
 
 ```bash
 atlas project inspect .
+atlas project plan .
 ```
 
-6. Generate a public-safe context pack:
+6. Create a project-owned adapter scaffold only when you explicitly decide to connect a supported Atlas Candidate:
+
+```bash
+atlas adapter init enterprise-intake --target .
+atlas adapter init ai-execution --target .
+atlas adapter init knowledge-intake --target .
+```
+
+7. Diagnose the local Gateway environment:
+
+```bash
+atlas doctor
+```
+
+8. Generate a public-safe context pack:
 
 ```bash
 atlas context
@@ -72,6 +87,7 @@ Current maturity note:
 - AI Execution still requires a project-side provider adapter for provider calls, prompts, model choice, RAG/Knowledge, retry/timeout behavior, business rules, and persistence.
 - Knowledge Intake still requires a project-side adapter for OCR/parsing, chunking, embedding/vector DB, retrieval/ranking strategy, prompts/LLMs, business knowledge, persistence, and permissions.
 - Atlas does not automatically learn project code.
+- Atlas does not automatically write adapter scaffolds into a project. Run `adapter init` only when adoption is explicit.
 - `NO_ATLAS_REUSE` is a normal outcome when Atlas is not a fit.
 
 ## Enterprise Intake Example
@@ -162,6 +178,11 @@ Current real limitation:
 - `atlas capability show ai-execution`
 - `atlas capability show knowledge-intake`
 - `atlas project inspect <project-path>`
+- `atlas project plan <project-path>`
+- `atlas adapter init enterprise-intake --target <project-path>`
+- `atlas adapter init ai-execution --target <project-path>`
+- `atlas adapter init knowledge-intake --target <project-path>`
+- `atlas doctor`
 - `atlas file inspect <file>`
 - `atlas context`
 - `python -m atlas_gateway ...`

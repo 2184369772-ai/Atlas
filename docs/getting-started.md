@@ -15,6 +15,8 @@ atlas capability show enterprise-intake
 atlas capability show ai-execution
 atlas capability show knowledge-intake
 atlas project inspect .
+atlas project plan .
+atlas doctor
 ```
 
 ## Tabular Example
@@ -53,3 +55,15 @@ python examples/knowledge-intake-synthetic/run_example.py
 ```
 
 This example uses only synthetic sources and retrieval evidence.
+
+## Adapter Scaffold
+
+Only run scaffold generation when you explicitly decide to connect Atlas:
+
+```bash
+atlas adapter init enterprise-intake --target .
+atlas adapter init ai-execution --target .
+atlas adapter init knowledge-intake --target .
+```
+
+The scaffold is project-owned and contains TODO hooks only. It does not generate business fields, prompts, SQL, database writes, permissions, RAG strategy, or real business rules.

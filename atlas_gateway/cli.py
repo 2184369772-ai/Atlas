@@ -7,9 +7,12 @@ from pathlib import Path
 
 from atlas_consumer.bridge import inspect_file, result_to_payload
 
+from .adapter_scaffold import init_adapter, to_json as scaffold_to_json
 from .catalog import get_capability, list_capabilities
 from .context_pack import build_context_markdown, write_context
+from .doctor import run_doctor, to_json as doctor_to_json
 from .inspector import inspect_project, to_json
+from .project_plan import build_project_plan, to_json as plan_to_json
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -34,6 +37,17 @@ def build_parser() -> argparse.ArgumentParser:
     project_inspect = project_subparsers.add_parser("inspect", help="Inspect one project path.")
     project_inspect.add_argument("project_path", help="Path to the project directory or file.")
     project_inspect.add_argument("--json", action="store_true", help="Return machine-readable JSON.")
+    project_plan = project_subparsers.add_parser("plan", help="Build a conservative Atlas adoption plan for one project path.")
+    project_plan.add_argument("project_path", help="Path to the project directory or file.")
+    project_plan.add_argument("--json", action="store_true", help="Return machine-readable JSON.")
+
+    adapter_parser = subparsers.add_parser("adapter", help="Create project-owned Atlas adapter scaffolds.")
+    adapter_subparsers = adapter_parser.add_subparsers(dest="command", required=True)
+    adapter_init = adapter_subparsers.add_parser("init", help="Create a minimal project-side adapter scaffold.")
+    adapter_init.add_argument("capability", help="Capability id or name.")
+    adapter_init.add_argument("--target", required=True, help="Target project path.")
+    adapter_init.add_argument("--force", action="store_true", help="Overwrite scaffold files if they already exist.")
+    adapter_init.add_argument("--json", action="store_true", help="Return machine-readable JSON.")
 
     file_parser = subparsers.add_parser("file", help="Inspect one file through Atlas Consumer Bridge.")
     file_subparsers = file_parser.add_subparsers(dest="command", required=True)
@@ -49,6 +63,8 @@ def build_parser() -> argparse.ArgumentParser:
     context_parser = subparsers.add_parser("context", help="Generate a public-safe Atlas context pack.")
     context_parser.add_argument("--output", help="Optional output file path.")
 
+    subparsers.add_parser("doctor", help="Run read-only Atlas Gateway environment diagnostics.")
+
     return parser
 
 
@@ -60,10 +76,14 @@ def main(argv: list[str] | None = None) -> int:
         return run_capability(args)
     if args.group == "project":
         return run_project(args)
+    if args.group == "adapter":
+        return run_adapter(args)
     if args.group == "file":
         return run_file(args, parser)
     if args.group == "context":
         return run_context(args)
+    if args.group == "doctor":
+        return run_doctor_command()
 
     parser.error(f"Unsupported command group: {args.group}")
     return 2
@@ -105,6 +125,9 @@ def run_capability(args: argparse.Namespace) -> int:
 
 
 def run_project(args: argparse.Namespace) -> int:
+    if args.command == "plan":
+        return run_project_plan(args)
+
     payload = inspect_project(args.project_path)
     if args.json:
         sys.stdout.write(to_json(payload))
@@ -125,6 +148,70 @@ def run_project(args: argparse.Namespace) -> int:
         sys.stdout.write(f"Recommendation: {finding['recommendation']}\n")
         sys.stdout.write(f"Reason: {finding['reason']}\n")
         sys.stdout.write(f"Confidence: {finding['confidence']}\n")
+    return 0
+
+
+def run_project_plan(args: argparse.Namespace) -> int:
+    payload = build_project_plan(args.project_path)
+    if args.json:
+        sys.stdout.write(plan_to_json(payload))
+        sys.stdout.write("\n")
+        return 0
+
+    sys.stdout.write(f"Project: {payload['project_path']}\n")
+    sys.stdout.write(f"Overall recommendation: {payload['overall_recommendation']}\n")
+    sys.stdout.write(f"Reason: {payload['reason']}\n")
+    if not payload["recommended_capabilities"]:
+        sys.stdout.write("Recommended capabilities: none\n")
+    for item in payload["recommended_capabilities"]:
+        sys.stdout.write("\n")
+        sys.stdout.write(f"Capability: {item['capability']}\n")
+        sys.stdout.write(f"Maturity: {item['maturity']}\n")
+        sys.stdout.write(f"Recommendation: {item['recommendation']}\n")
+        sys.stdout.write(f"Adapter scaffold supported: {item['adapter_scaffold_supported']}\n")
+        sys.stdout.write("Atlas owns:\n")
+        for value in item["atlas_owns"]:
+            sys.stdout.write(f"- {value}\n")
+        sys.stdout.write("Project must own:\n")
+        for value in item["project_must_own"]:
+            sys.stdout.write(f"- {value}\n")
+        sys.stdout.write("Adapter hooks:\n")
+        if item["adapter_hooks"]:
+            for value in item["adapter_hooks"]:
+                sys.stdout.write(f"- {value}\n")
+        else:
+            sys.stdout.write("- none\n")
+        sys.stdout.write("Risks / boundary:\n")
+        for value in item["risks_and_boundaries"]:
+            sys.stdout.write(f"- {value}\n")
+
+    sys.stdout.write("\nForbidden capabilities:\n")
+    for item in payload["forbidden_capabilities"]:
+        sys.stdout.write(f"- {item['capability_id']}: {item['recommendation']}\n")
+    return 0
+
+
+def run_adapter(args: argparse.Namespace) -> int:
+    try:
+        payload = init_adapter(args.capability, args.target, force=args.force)
+    except (FileExistsError, ValueError) as exc:
+        sys.stderr.write(f"{exc}\n")
+        return 1
+
+    if args.json:
+        sys.stdout.write(scaffold_to_json(payload))
+        sys.stdout.write("\n")
+        return 0
+
+    sys.stdout.write(f"Status: {payload['status']}\n")
+    sys.stdout.write(f"Capability: {payload['capability_id']}\n")
+    sys.stdout.write(f"Target: {payload['target']}\n")
+    if payload["created_files"]:
+        sys.stdout.write("Created files:\n")
+        for path in payload["created_files"]:
+            sys.stdout.write(f"- {path}\n")
+    else:
+        sys.stdout.write(f"Reason: {payload['reason']}\n")
     return 0
 
 
@@ -156,5 +243,12 @@ def run_context(args: argparse.Namespace) -> int:
         return 0
 
     sys.stdout.write(build_context_markdown())
+    sys.stdout.write("\n")
+    return 0
+
+
+def run_doctor_command() -> int:
+    payload = run_doctor()
+    sys.stdout.write(doctor_to_json(payload))
     sys.stdout.write("\n")
     return 0

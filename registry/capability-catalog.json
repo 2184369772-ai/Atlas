@@ -1,5 +1,5 @@
 {
-  "catalog_version": "atlas-public-0.4.0-alpha",
+  "catalog_version": "atlas-public-0.5.0-alpha",
   "capabilities": [
     {
       "id": "ai-execution",

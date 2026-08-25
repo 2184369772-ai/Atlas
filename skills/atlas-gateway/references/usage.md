@@ -17,11 +17,14 @@ Expected chain:
 ```text
 new project
 -> project inspect
+-> project plan
 -> CONTROLLED_REUSE
 -> capability show tabular-core
 -> file inspect
 -> keep adapter and business rules in the project
 ```
+
+For Candidate adapter boundaries, only run `adapter init` after the task explicitly asks to connect Atlas.
 
 ## Scenario B: Atlas Has No Value
 
@@ -35,6 +38,16 @@ new project
 ```
 
 Do not force Atlas into the project after a `NO_ATLAS_REUSE` result.
+
+## Scenario C: Adapter Scaffold
+
+Supported scaffolds:
+
+- `enterprise-intake`
+- `ai-execution`
+- `knowledge-intake`
+
+The scaffold is project-owned. It must not generate business fields, prompts, SQL, database writes, permissions, RAG strategy, or real business rules.
 
 ## Maturity Discipline
 
