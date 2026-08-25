@@ -13,6 +13,8 @@ Use it to:
 - query the current Enterprise Intake Candidate without upgrading its maturity
 - query the current AI Execution Candidate without upgrading its maturity
 - query the current Knowledge Intake Candidate without upgrading its maturity
+- query the current File Lifecycle Candidate without upgrading its maturity
+- query the current Operation Outcome Candidate without upgrading its maturity
 - generate a short public-safe context pack
 
 Commands:
@@ -23,6 +25,8 @@ atlas capability show tabular-core
 atlas capability show enterprise-intake
 atlas capability show ai-execution
 atlas capability show knowledge-intake
+atlas capability show file-lifecycle
+atlas capability show operation-outcome
 atlas project inspect <project-path>
 atlas project plan <project-path>
 atlas adapter init enterprise-intake --target <project-path>

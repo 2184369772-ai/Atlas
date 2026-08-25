@@ -2,7 +2,7 @@
 
 Atlas is a software engineering reuse framework for developers and AI/Codex. It scans the current project, decides whether existing Atlas capabilities are worth reusing, and when appropriate provides validated Core, Adapter, and engineering semantics from real project work. When Atlas is not a fit, it clearly returns `NO_ATLAS_REUSE`.
 
-Current public package version: `0.6.0-alpha`
+Current public package version: `0.7.0-alpha`
 
 License: `Apache-2.0`
 
@@ -71,6 +71,24 @@ Then open a new Codex task and describe your normal development request.
 - Conflict and review signal.
 - Retrieval evidence.
 
+### File Lifecycle
+
+- File/source identity.
+- File metadata and checksum when available.
+- Reference and availability semantics.
+- Lifecycle state and state transition checks.
+- Retention intent.
+- File-level issues.
+
+### Operation Outcome
+
+- Shared operation-result status.
+- Issues and warnings.
+- Evidence references.
+- Affected and remaining scope.
+- Confidence and risk.
+- Fallback and human-attention signal.
+
 ### Project Adoption
 
 - `atlas project inspect`
@@ -124,9 +142,9 @@ Continue normal development without adding Atlas
 | Enterprise Intake | `SHADOW_VALIDATED / REFERENCE_ONLY` |
 | AI Execution | `SHADOW_VALIDATED / REFERENCE_ONLY` |
 | Knowledge Intake | `SHADOW_VALIDATED / REFERENCE_ONLY` |
+| File Lifecycle | `SHADOW_VALIDATED / REFERENCE_ONLY` |
+| Operation Outcome | `SHADOW_VALIDATED / REFERENCE_ONLY` |
 | Runtime Config | `REFERENCE_ONLY` |
-| File Lifecycle | `REFERENCE_ONLY` |
-| Operation Outcome | `SEMANTIC_REFERENCE` |
 
 Candidate capabilities are not Stable Modules. They are useful references with explicit boundaries, and real projects must still provide their own adapters and business logic.
 

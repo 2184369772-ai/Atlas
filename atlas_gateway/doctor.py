@@ -14,7 +14,9 @@ PACKAGE_PATHS = {
     "atlas_tabular": REPO_ROOT / "packages" / "tabular-input" / "src",
     "atlas_enterprise_intake": REPO_ROOT / "packages" / "enterprise-intake" / "src",
     "atlas_ai_execution": REPO_ROOT / "packages" / "ai-execution" / "src",
+    "atlas_file_lifecycle": REPO_ROOT / "packages" / "file-lifecycle" / "src",
     "atlas_knowledge_intake": REPO_ROOT / "packages" / "knowledge-intake" / "src",
+    "atlas_operation_outcome": REPO_ROOT / "packages" / "operation-outcome" / "src",
 }
 
 

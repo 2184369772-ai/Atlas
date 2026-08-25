@@ -59,11 +59,11 @@ def test_adapter_init_public_boundary_and_no_overwrite(tmp_path: Path):
     assert "Refusing to overwrite" in second.stderr
 
 
-def test_adapter_init_public_rejects_semantic_reference(tmp_path: Path):
+def test_adapter_init_public_rejects_reference_only_without_scaffold(tmp_path: Path):
     completed = run_atlas("adapter", "init", "operation-outcome", "--target", str(tmp_path))
 
     assert completed.returncode == 1
-    assert "SEMANTIC_REFERENCE" in completed.stderr
+    assert "no adapter scaffold template" in completed.stderr
 
 
 def test_doctor_public_json():

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "atlas-framework"
-version = "0.6.0-alpha"
+version = "0.7.0-alpha"
 description = "Experimental framework that helps AI and Codex discover and reuse validated engineering capabilities in software projects."
 readme = "README.md"
 license = "Apache-2.0"
@@ -17,8 +17,8 @@ dependencies = [
 atlas = "atlas_gateway.cli:main"
 
 [tool.setuptools.packages.find]
-where = [".", "packages/ai-execution/src", "packages/enterprise-intake/src", "packages/knowledge-intake/src", "packages/tabular-input/src"]
-include = ["atlas_gateway*", "atlas_consumer*", "atlas_ai_execution*", "atlas_enterprise_intake*", "atlas_knowledge_intake*", "atlas_tabular*"]
+where = [".", "packages/ai-execution/src", "packages/enterprise-intake/src", "packages/file-lifecycle/src", "packages/knowledge-intake/src", "packages/operation-outcome/src", "packages/tabular-input/src"]
+include = ["atlas_gateway*", "atlas_consumer*", "atlas_ai_execution*", "atlas_enterprise_intake*", "atlas_file_lifecycle*", "atlas_knowledge_intake*", "atlas_operation_outcome*", "atlas_tabular*"]
 
 [tool.setuptools.package-data]
 atlas_gateway = [

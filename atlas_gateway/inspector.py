@@ -162,7 +162,7 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
             ProjectSignal(
                 capability_id="file-lifecycle",
                 detected_signal="Upload/temp/archive/retention style file-handling patterns detected.",
-                reason="File Lifecycle remains a Candidate. Reuse should stay reference-level until a project-specific adapter proves the fit.",
+                reason="File Lifecycle is a reference-level package for file identity, metadata, reference, lifecycle state, retention intent, and file-level issues. Upload, storage, permissions, ImportBatch, and business rules stay project-owned.",
                 confidence="LOW",
             )
         )
@@ -171,7 +171,7 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
             ProjectSignal(
                 capability_id="operation-outcome",
                 detected_signal="Structured action-result semantics detected.",
-                reason="Operation Outcome is only a semantic Candidate. It can align language, but there is no standalone package to call.",
+                reason="Operation Outcome is a reference-level result semantics package. Reuse still requires project-side mapping and must not replace API envelopes, workflow, approval, audit, or business state machines.",
                 confidence="LOW",
             )
         )

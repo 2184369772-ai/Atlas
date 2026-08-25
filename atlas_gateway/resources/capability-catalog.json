@@ -1,5 +1,5 @@
 {
-  "catalog_version": "atlas-public-0.6.0-alpha",
+  "catalog_version": "atlas-public-0.7.0-alpha",
   "capabilities": [
     {
       "id": "ai-execution",
@@ -38,15 +38,18 @@
       "id": "file-lifecycle",
       "name": "File Lifecycle",
       "aliases": [
-        "file lifecycle"
+        "file lifecycle",
+        "file reference",
+        "file metadata",
+        "retention"
       ],
-      "governance_status": "ATLAS CANDIDATE",
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
       "recommendation": "REFERENCE_ONLY",
-      "use_via": "Reference for adapter or project-specific design",
-      "can_use_now": "No",
+      "use_via": "packages/file-lifecycle with project-side file/storage adapter",
+      "can_use_now": "Yes, through the shadow-validated reference implementation and caller-owned storage / permission / business boundary",
       "reference_only": "Yes",
       "forbidden_as_ready_made_call": "Yes",
-      "notes": "Candidate only. Public distribution does not promote it to a stable runtime package."
+      "notes": "Use this only for file/source identity, metadata, reference, lifecycle state, retention intent, file-level issues, and Shadow comparison. Upload/download, object storage, permissions, ImportBatch, business version rules, approvals, and database transactions stay in the project."
     },
     {
       "id": "knowledge-intake",
@@ -69,15 +72,18 @@
       "id": "operation-outcome",
       "name": "Operation Outcome",
       "aliases": [
-        "operation outcome"
+        "operation outcome",
+        "outcome",
+        "operation result",
+        "review required"
       ],
-      "governance_status": "SEMANTIC CANDIDATE ONLY / NO PACKAGE",
-      "recommendation": "SEMANTIC_REFERENCE",
-      "use_via": "Semantic reference only",
-      "can_use_now": "No",
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
+      "recommendation": "REFERENCE_ONLY",
+      "use_via": "packages/operation-outcome with project-side result mapping",
+      "can_use_now": "Yes, through the shadow-validated reference implementation and caller-owned business status / API boundary",
       "reference_only": "Yes",
       "forbidden_as_ready_made_call": "Yes",
-      "notes": "Semantic reference only. No standalone package is shipped in this public distribution."
+      "notes": "Use this only for shared operation-result semantics: status, issues, evidence, affected/remaining scope, confidence/risk, fallback, and human attention. It is not an API envelope, workflow, approval, exception framework, notification, audit log, or business state machine."
     },
     {
       "id": "runtime-config",
