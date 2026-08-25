@@ -5,14 +5,14 @@ The Atlas Codex skill helps Codex decide whether Atlas should be checked for a s
 Install the skill locally:
 
 ```bash
-python skills/atlas-gateway/scripts/install_local.py install
+atlas skill install
 ```
 
 Check the install:
 
 ```bash
-python skills/atlas-gateway/scripts/install_local.py status
-python skills/atlas-gateway/scripts/run_gateway.py --status
+atlas skill status
+atlas doctor
 ```
 
 Real limitations:

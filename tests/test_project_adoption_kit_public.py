@@ -74,3 +74,27 @@ def test_doctor_public_json():
     assert payload["gateway_available"] is True
     assert payload["capability_catalog"]["available"] is True
     assert "packages" in payload
+
+
+def test_skill_cli_install_status_uninstall(tmp_path: Path):
+    target = tmp_path / "atlas-gateway"
+
+    install = run_atlas("skill", "install", "--target", str(target), "--json")
+    status = run_atlas("skill", "status", "--target", str(target), "--json")
+    uninstall = run_atlas("skill", "uninstall", "--target", str(target), "--json")
+
+    assert install.returncode == 0, install.stderr
+    assert status.returncode == 0
+    assert uninstall.returncode == 0
+    assert json.loads(install.stdout)["mode"] == "copy"
+    assert json.loads(status.stdout)["skill_md_exists"] is True
+    assert json.loads(uninstall.stdout)["status"] == "REMOVED"
+
+
+def test_setup_public_json():
+    completed = run_atlas("setup", "--json")
+
+    assert completed.returncode == 0
+    payload = json.loads(completed.stdout)
+    assert payload["doctor"]["gateway_available"] is True
+    assert "atlas skill install" in payload["next_steps"][0]

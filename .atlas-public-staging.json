@@ -1,6 +1,6 @@
 {
   "generator": "Atlas Public Packaging v0.1",
-  "public_version": "0.5.0-alpha",
+  "public_version": "0.6.0-alpha",
   "license": "Apache-2.0",
   "release_blocker": null,
   "source_repo": "internal Atlas training/development repository",

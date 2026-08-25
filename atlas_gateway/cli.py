@@ -13,6 +13,7 @@ from .context_pack import build_context_markdown, write_context
 from .doctor import run_doctor, to_json as doctor_to_json
 from .inspector import inspect_project, to_json
 from .project_plan import build_project_plan, to_json as plan_to_json
+from .skill_cli import install_skill, skill_status, uninstall_skill
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -65,6 +66,22 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser("doctor", help="Run read-only Atlas Gateway environment diagnostics.")
 
+    skill_parser = subparsers.add_parser("skill", help="Install, inspect, or remove the bundled Atlas Codex skill.")
+    skill_subparsers = skill_parser.add_subparsers(dest="command", required=True)
+    skill_install = skill_subparsers.add_parser("install", help="Install the bundled Atlas Gateway skill by copy.")
+    skill_install.add_argument("--target", help="Optional target skill directory.")
+    skill_install.add_argument("--force", action="store_true", help="Replace an existing atlas-gateway skill directory.")
+    skill_install.add_argument("--json", action="store_true", help="Return machine-readable JSON.")
+    skill_status_parser = skill_subparsers.add_parser("status", help="Show bundled Atlas Gateway skill install status.")
+    skill_status_parser.add_argument("--target", help="Optional target skill directory.")
+    skill_status_parser.add_argument("--json", action="store_true", help="Return machine-readable JSON.")
+    skill_uninstall = skill_subparsers.add_parser("uninstall", help="Remove the installed Atlas Gateway skill.")
+    skill_uninstall.add_argument("--target", help="Optional target skill directory.")
+    skill_uninstall.add_argument("--json", action="store_true", help="Return machine-readable JSON.")
+
+    setup_parser = subparsers.add_parser("setup", help="Run a short read-only setup check for Atlas and the Codex skill.")
+    setup_parser.add_argument("--json", action="store_true", help="Return machine-readable JSON.")
+
     return parser
 
 
@@ -84,6 +101,10 @@ def main(argv: list[str] | None = None) -> int:
         return run_context(args)
     if args.group == "doctor":
         return run_doctor_command()
+    if args.group == "skill":
+        return run_skill(args)
+    if args.group == "setup":
+        return run_setup(args)
 
     parser.error(f"Unsupported command group: {args.group}")
     return 2
@@ -250,5 +271,57 @@ def run_context(args: argparse.Namespace) -> int:
 def run_doctor_command() -> int:
     payload = run_doctor()
     sys.stdout.write(doctor_to_json(payload))
+    sys.stdout.write("\n")
+    return 0
+
+
+def run_skill(args: argparse.Namespace) -> int:
+    try:
+        if args.command == "install":
+            payload = install_skill(args.target, force=args.force)
+        elif args.command == "status":
+            payload = skill_status(args.target)
+        else:
+            payload = uninstall_skill(args.target)
+    except (FileExistsError, ValueError) as exc:
+        sys.stderr.write(f"{exc}\n")
+        return 1
+
+    if args.json:
+        sys.stdout.write(json.dumps(payload, ensure_ascii=False, indent=2))
+        sys.stdout.write("\n")
+        return 0
+
+    for key, value in payload.items():
+        sys.stdout.write(f"{key}: {value}\n")
+    return 0
+
+
+def run_setup(args: argparse.Namespace) -> int:
+    doctor = run_doctor()
+    skill = skill_status()
+    payload = {
+        "doctor": doctor,
+        "skill": skill,
+        "next_steps": [
+            "Run atlas skill install if you use Codex and the skill is not installed.",
+            "Run atlas project inspect . and atlas project plan . inside a software project.",
+            "Accept NO_ATLAS_REUSE when Atlas is not a fit.",
+        ],
+    }
+    if args.json:
+        sys.stdout.write(json.dumps(payload, ensure_ascii=False, indent=2))
+        sys.stdout.write("\n")
+        return 0
+
+    sys.stdout.write("Atlas setup check\n")
+    sys.stdout.write(f"Doctor status: {doctor['status']}\n")
+    sys.stdout.write(f"Gateway available: {doctor['gateway_available']}\n")
+    sys.stdout.write(f"Catalog version: {doctor['atlas_version']}\n")
+    sys.stdout.write(f"Codex skill installed: {skill['skill_md_exists']}\n")
+    if not skill["skill_md_exists"]:
+        sys.stdout.write("Suggested next step for Codex users: atlas skill install\n")
+    sys.stdout.write("\nDoctor:\n")
+    sys.stdout.write(doctor_to_json(doctor))
     sys.stdout.write("\n")
     return 0

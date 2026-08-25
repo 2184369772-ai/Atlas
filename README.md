@@ -1,194 +1,169 @@
 # Atlas
 
-Atlas is an experimental development framework that helps AI and Codex discover, judge, and carefully reuse validated engineering capabilities in software projects.
+Atlas is a software engineering reuse framework for developers and AI/Codex. It scans the current project, decides whether existing Atlas capabilities are worth reusing, and when appropriate provides validated Core, Adapter, and engineering semantics from real project work. When Atlas is not a fit, it clearly returns `NO_ATLAS_REUSE`.
 
-Atlas is not:
-
-- a universal AI coding agent
-- a platform that automatically generates enterprise systems
-- a Workflow/Auth/RBAC framework
-- a system that automatically learns your codebase
-
-Current public package version: `0.5.0-alpha`
+Current public package version: `0.6.0-alpha`
 
 License: `Apache-2.0`
 
 ## Quick Start
 
-1. Clone this public distribution into a new directory.
-2. Create and activate a virtual environment:
-
 ```bash
-python -m venv .venv
-```
+pip install git+https://github.com/2184369772-ai/Atlas.git
 
-3. Install Atlas in editable mode:
-
-```bash
-pip install -e .
-```
-
-4. Inspect current Atlas capabilities:
-
-```bash
+atlas doctor
 atlas capability list
-atlas capability show tabular-core
-atlas capability show enterprise-intake
-atlas capability show ai-execution
-atlas capability show knowledge-intake
-```
 
-5. Inspect your current project:
-
-```bash
+cd your-project
 atlas project inspect .
 atlas project plan .
 ```
 
-6. Create a project-owned adapter scaffold only when you explicitly decide to connect a supported Atlas Candidate:
+Codex users can also install the Atlas Skill:
 
 ```bash
+atlas skill install
+atlas skill status
+```
+
+Then open a new Codex task and describe your normal development request.
+
+## What Atlas Can Help With
+
+### Project Analysis
+
+- Scan a new software project.
+- Decide whether Atlas has useful reuse value.
+- Produce an adoption plan.
+- Make clear what must stay project-owned.
+
+### Tabular / Excel / CSV
+
+- Read CSV/XLSX files into structured JSON.
+- Preserve sheet, header, row, and cell semantics.
+- Report issues and warnings.
+- Help with pre-processing before complex spreadsheet import flows.
+
+### Enterprise Intake
+
+- Preview and dry-run semantics.
+- Row-level `ACCEPT`, `SKIP`, `REJECT`, and `REVIEW`.
+- Partial completion.
+- Duplicate and idempotency semantics.
+- Commit readiness.
+- Clear Adapter boundary.
+
+### AI Execution
+
+- Standardized AI execution request/result shape.
+- Provider failure, timeout, and invalid-result normalization.
+- Fallback signal.
+- Evidence reference.
+- Confidence and risk.
+- Human escalation.
+
+### Knowledge Intake
+
+- Knowledge source identity.
+- Source version and status.
+- Knowledge unit to source linkage.
+- Citation and provenance.
+- Conflict and review signal.
+- Retrieval evidence.
+
+### Project Adoption
+
+- `atlas project inspect`
+- `atlas project plan`
+- `atlas adapter init`
+- Adapter scaffold for supported Candidate boundaries.
+- `NO_ATLAS_REUSE` when Atlas is not useful.
+
+### Codex Skill
+
+After installing the Skill, Codex can use Atlas Gateway during suitable software engineering tasks to decide whether Atlas should be reused.
+
+Current honest limits:
+
+- Not every Codex session is guaranteed to trigger the Skill automatically.
+- Hot reload is not guaranteed; a new Codex task is usually more reliable after installation.
+- Atlas does not force every project to use Atlas.
+- `NO_ATLAS_REUSE` is a correct and expected result for many projects.
+
+## Practical Examples
+
+```text
+Project contains a complex Excel import
+        |
+atlas project inspect .
+        |
+Finds Tabular / Enterprise Intake signals
+        |
+atlas project plan .
+        |
+atlas adapter init enterprise-intake --target .
+        |
+Project fills in its own fields, validation, and database logic
+```
+
+```text
+Ordinary small project
+        |
+atlas project inspect .
+        |
+NO_ATLAS_REUSE
+        |
+Continue normal development without adding Atlas
+```
+
+## Capability Maturity
+
+| Capability | Public maturity / recommendation |
+| --- | --- |
+| Tabular Core | `CONTROLLED_REUSE` |
+| Enterprise Intake | `SHADOW_VALIDATED / REFERENCE_ONLY` |
+| AI Execution | `SHADOW_VALIDATED / REFERENCE_ONLY` |
+| Knowledge Intake | `SHADOW_VALIDATED / REFERENCE_ONLY` |
+| Runtime Config | `REFERENCE_ONLY` |
+| File Lifecycle | `REFERENCE_ONLY` |
+| Operation Outcome | `SEMANTIC_REFERENCE` |
+
+Candidate capabilities are not Stable Modules. They are useful references with explicit boundaries, and real projects must still provide their own adapters and business logic.
+
+## Common Commands
+
+```bash
+atlas setup
+atlas doctor
+atlas capability list
+atlas capability show enterprise-intake
+atlas project inspect .
+atlas project plan .
 atlas adapter init enterprise-intake --target .
 atlas adapter init ai-execution --target .
 atlas adapter init knowledge-intake --target .
-```
-
-7. Diagnose the local Gateway environment:
-
-```bash
-atlas doctor
-```
-
-8. Generate a public-safe context pack:
-
-```bash
+atlas file inspect path/to/file.csv
 atlas context
+atlas skill install
+atlas skill status
+atlas skill uninstall
 ```
 
-## Current Capabilities
+## Atlas Is Not
 
-- Tabular Core: `CONTROLLED_REUSE`
-- Enterprise Intake: `REFERENCE_ONLY`
-- AI Execution: `REFERENCE_ONLY`
-- Knowledge Intake: `REFERENCE_ONLY`
-- Runtime Config: `REFERENCE_ONLY`
-- File Lifecycle: `REFERENCE_ONLY`
-- Operation Outcome: `SEMANTIC_REFERENCE`
+Atlas is not:
 
-Current maturity note:
+- a universal AI coding agent
+- a platform that automatically generates complete systems
+- a system that automatically learns private code
+- a Workflow/Auth/RBAC platform
+- a RAG platform
+- a framework that must be used in every project
 
-- Tabular Core is the current most mature public Atlas capability.
-- Enterprise Intake is a shadow-validated Candidate, not a Stable Module.
-- AI Execution is a shadow-validated Candidate, not a Stable Module.
-- Knowledge Intake is a shadow-validated Candidate, not a Stable Module.
-- Runtime Config and File Lifecycle remain reference-only Candidates.
-- Operation Outcome remains a semantic reference, not a shipped package.
-- Enterprise Intake still requires a project-side adapter for duplicate policy, business validation, persistence, transactions, and DB writes.
-- AI Execution still requires a project-side provider adapter for provider calls, prompts, model choice, RAG/Knowledge, retry/timeout behavior, business rules, and persistence.
-- Knowledge Intake still requires a project-side adapter for OCR/parsing, chunking, embedding/vector DB, retrieval/ranking strategy, prompts/LLMs, business knowledge, persistence, and permissions.
-- Atlas does not automatically learn project code.
-- Atlas does not automatically write adapter scaffolds into a project. Run `adapter init` only when adoption is explicit.
-- `NO_ATLAS_REUSE` is a normal outcome when Atlas is not a fit.
+## Public Safety
 
-## Enterprise Intake Example
-
-Run the public-safe synthetic example:
-
-```bash
-python examples/enterprise-intake-synthetic/run_example.py
-```
-
-This example proves:
-
-- Tabular input
-- project adapter
-- preview
-- row decision and issues
-- commit readiness
-
-It does not write to a database.
-
-## AI Execution Example
-
-Run the public-safe synthetic example:
-
-```bash
-python examples/ai-execution-synthetic/run_example.py
-```
-
-This example proves:
-
-- synthetic request
-- synthetic provider adapter
-- success and failure normalization
-- fallback signal
-- confidence and risk extraction
-- human escalation
-- `AIExecutionResult`
-
-It does not call an external AI API.
-
-## Knowledge Intake Example
-
-Run the public-safe synthetic example:
-
-```bash
-python examples/knowledge-intake-synthetic/run_example.py
-```
-
-This example proves:
-
-- source identity
-- version/status
-- knowledge unit to source linkage
-- citation/provenance
-- retrieval evidence
-- issue/conflict
-- human-review signal
-
-It does not include private documents, company knowledge, embeddings, vector DBs, prompts, or LLM calls.
-
-## Codex Skill
-
-If you use Codex, Atlas also ships a local skill:
-
-```bash
-python skills/atlas-gateway/scripts/install_local.py install
-```
-
-Then verify the install:
-
-```bash
-python skills/atlas-gateway/scripts/install_local.py status
-python skills/atlas-gateway/scripts/run_gateway.py --status
-```
-
-Current real limitation:
-
-- install the skill before expecting Codex to use it
-- a new task or new session is more reliable than expecting hot reload
-- Atlas is not triggered for every task
-- `NO_ATLAS_REUSE` is a valid result
-
-## Commands
-
-- `atlas capability list`
-- `atlas capability show tabular-core`
-- `atlas capability show enterprise-intake`
-- `atlas capability show ai-execution`
-- `atlas capability show knowledge-intake`
-- `atlas project inspect <project-path>`
-- `atlas project plan <project-path>`
-- `atlas adapter init enterprise-intake --target <project-path>`
-- `atlas adapter init ai-execution --target <project-path>`
-- `atlas adapter init knowledge-intake --target <project-path>`
-- `atlas doctor`
-- `atlas file inspect <file>`
-- `atlas context`
-- `python -m atlas_gateway ...`
+This public alpha contains only public-safe code, synthetic examples, and public-safe tests. Shadow-validated Candidates may say they were validated through isolated read-only shadow comparison across multiple real project implementations, but this repository does not include private project names, company evidence, private paths, prompts, credentials, or internal provenance.
 
 ## Packaging Note
 
-If you create a real public GitHub repository from this package, initialize a brand-new Git repository from this exported directory only.
-
-Do not push the Git history of an internal training or development repository.
+This repository is the public distribution. It does not carry private development history.

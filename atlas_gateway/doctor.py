@@ -43,11 +43,13 @@ def run_doctor() -> dict[str, Any]:
 
 
 def check_catalog() -> dict[str, Any]:
-    if not CATALOG_PATH.exists():
+    try:
+        payload = load_catalog()
+    except FileNotFoundError:
         return {"path": str(CATALOG_PATH), "available": False, "capability_count": 0}
-    payload = load_catalog()
+    source = str(CATALOG_PATH) if CATALOG_PATH.exists() else "package-resource:atlas_gateway/resources/capability-catalog.json"
     return {
-        "path": str(CATALOG_PATH),
+        "path": source,
         "available": True,
         "catalog_version": payload.get("catalog_version", "UNKNOWN"),
         "capability_count": len(payload.get("capabilities", [])),
@@ -84,13 +86,24 @@ def check_skill() -> dict[str, Any]:
     source = REPO_ROOT / "skills" / "atlas-gateway"
     codex_home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
     target = codex_home / "skills" / "atlas-gateway"
+    resource_available = skill_resource_available()
     return {
         "source_path": str(source),
-        "source_exists": (source / "SKILL.md").exists(),
+        "source_exists": (source / "SKILL.md").exists() or resource_available,
+        "source_kind": "filesystem" if (source / "SKILL.md").exists() else "package-resource",
         "installed_path_checked": str(target),
         "installed": (target / "SKILL.md").exists(),
         "note": "Doctor only checks obvious local skill paths and does not install or modify anything.",
     }
+
+
+def skill_resource_available() -> bool:
+    try:
+        from importlib import resources
+
+        return resources.files("atlas_gateway").joinpath("resources/skills/atlas-gateway/SKILL.md").is_file()
+    except (FileNotFoundError, ModuleNotFoundError):
+        return False
 
 
 def to_json(payload: dict[str, Any]) -> str:
