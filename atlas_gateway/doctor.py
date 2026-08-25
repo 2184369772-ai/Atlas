@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -17,6 +18,7 @@ PACKAGE_PATHS = {
     "atlas_file_lifecycle": REPO_ROOT / "packages" / "file-lifecycle" / "src",
     "atlas_knowledge_intake": REPO_ROOT / "packages" / "knowledge-intake" / "src",
     "atlas_operation_outcome": REPO_ROOT / "packages" / "operation-outcome" / "src",
+    "atlas_runtime_config": REPO_ROOT / "packages" / "runtime-config" / "src",
 }
 
 
@@ -36,11 +38,26 @@ def run_doctor() -> dict[str, Any]:
         "gateway_available": True,
         "repo_root": str(REPO_ROOT),
         "python": sys.executable,
+        "cli": check_cli_path(),
         "capability_catalog": catalog_status,
         "packages": package_status,
         "skill": skill_status,
         "issues": issues,
         "status": "OK" if not issues else "ATTENTION",
+    }
+
+
+def check_cli_path() -> dict[str, Any]:
+    resolved = shutil.which("atlas")
+    scripts_dir = Path(sys.executable).resolve().parent
+    local_exe = scripts_dir / ("atlas.exe" if os.name == "nt" else "atlas")
+    return {
+        "command": "atlas",
+        "on_path": resolved is not None,
+        "resolved_path": resolved,
+        "expected_local_script": str(local_exe),
+        "expected_local_script_exists": local_exe.exists(),
+        "note": "Doctor reports CLI/PATH state only. It does not modify PATH.",
     }
 
 

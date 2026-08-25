@@ -14,6 +14,15 @@ REQUIRED_MARKERS = (
     "registry/capability-catalog.json",
     "skills/atlas-gateway/SKILL.md",
 )
+PACKAGE_SRC_RELS = (
+    "packages/tabular-input/src",
+    "packages/runtime-config/src",
+    "packages/file-lifecycle/src",
+    "packages/enterprise-intake/src",
+    "packages/ai-execution/src",
+    "packages/knowledge-intake/src",
+    "packages/operation-outcome/src",
+)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -39,12 +48,14 @@ def main(argv: list[str] | None = None) -> int:
     package_available = is_gateway_package_available()
 
     if args.status:
+        python_exe = resolve_gateway_python(repo_root) if repo_root is not None else Path(sys.executable)
         if repo_root is not None:
             print(f"ATLAS_REPO_ROOT={repo_root}")
         elif package_available:
             print("ATLAS_REPO_ROOT=package-install")
         else:
             print("ATLAS_REPO_ROOT=unavailable")
+        print(f"ATLAS_PYTHON={python_exe}")
         print(f"ATLAS_GATEWAY={'available' if repo_root is not None or package_available else 'unavailable'}")
         return 0 if repo_root is not None or package_available else 1
 
@@ -60,9 +71,11 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 1
 
+    python_exe = resolve_gateway_python(repo_root) if repo_root is not None else Path(sys.executable)
     completed = subprocess.run(
-        [sys.executable, "-m", "atlas_gateway", *args.gateway_args],
+        [str(python_exe), "-m", "atlas_gateway", *args.gateway_args],
         cwd=repo_root if repo_root is not None else None,
+        env=build_gateway_env(repo_root),
         text=True,
         check=False,
         capture_output=False,
@@ -108,6 +121,39 @@ def is_repo_root(path: Path) -> bool:
 
 def is_gateway_package_available() -> bool:
     return importlib.util.find_spec("atlas_gateway") is not None
+
+
+def resolve_gateway_python(repo_root: Path | None) -> Path:
+    env_python = os.environ.get("ATLAS_PYTHON")
+    if env_python:
+        candidate = Path(env_python).expanduser().resolve()
+        if candidate.exists():
+            return candidate
+
+    if repo_root is not None:
+        candidates = (
+            repo_root / ".venv" / "Scripts" / "python.exe",
+            repo_root / ".venv" / "bin" / "python",
+        )
+        for candidate in candidates:
+            if candidate.exists():
+                return candidate
+
+    return Path(sys.executable)
+
+
+def build_gateway_env(repo_root: Path | None) -> dict[str, str]:
+    env = os.environ.copy()
+    if repo_root is None:
+        return env
+
+    paths = [str(repo_root)]
+    paths.extend(str(repo_root / rel) for rel in PACKAGE_SRC_RELS if (repo_root / rel).exists())
+    existing = env.get("PYTHONPATH")
+    if existing:
+        paths.append(existing)
+    env["PYTHONPATH"] = os.pathsep.join(paths)
+    return env
 
 
 if __name__ == "__main__":

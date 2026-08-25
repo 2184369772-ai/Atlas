@@ -2,7 +2,7 @@
 
 Atlas is a software engineering reuse framework for developers and AI/Codex. It scans the current project, decides whether existing Atlas capabilities are worth reusing, and when appropriate provides validated Core, Adapter, and engineering semantics from real project work. When Atlas is not a fit, it clearly returns `NO_ATLAS_REUSE`.
 
-Current public package version: `0.7.0-alpha`
+Current public package version: `1.0.0-alpha`
 
 License: `Apache-2.0`
 
@@ -144,7 +144,7 @@ Continue normal development without adding Atlas
 | Knowledge Intake | `SHADOW_VALIDATED / REFERENCE_ONLY` |
 | File Lifecycle | `SHADOW_VALIDATED / REFERENCE_ONLY` |
 | Operation Outcome | `SHADOW_VALIDATED / REFERENCE_ONLY` |
-| Runtime Config | `REFERENCE_ONLY` |
+| Runtime Config | `SHADOW_VALIDATED / REFERENCE_ONLY` |
 
 Candidate capabilities are not Stable Modules. They are useful references with explicit boundaries, and real projects must still provide their own adapters and business logic.
 

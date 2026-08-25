@@ -36,20 +36,22 @@
 ## Runtime Config
 
 - Recommendation: `REFERENCE_ONLY`
-- Candidate only.
-- Use as a design reference, not as a stable package promise.
+- Governance: `ATLAS CANDIDATE / SHADOW_VALIDATED`
+- Use as a reference implementation for config key/spec, source, required/default handling, type conversion, issue expression, effective value provenance, safe public serialization, and Shadow comparison.
+- Keep framework-specific configuration structures, config centers, deployment scripts, business defaults, and secret management in the project adapter.
 
 ## File Lifecycle
 
 - Recommendation: `REFERENCE_ONLY`
-- Candidate only.
+- Governance: `ATLAS CANDIDATE / SHADOW_VALIDATED`
 - Use as a boundary or adapter reference, not as a forced dependency.
 
 ## Operation Outcome
 
-- Recommendation: `SEMANTIC_REFERENCE`
-- Semantic reference only.
-- No standalone package is shipped or implied here.
+- Recommendation: `REFERENCE_ONLY`
+- Governance: `ATLAS CANDIDATE / SHADOW_VALIDATED`
+- Use as a reference implementation for shared operation-result semantics.
+- Keep API shape, workflow, approval, notification, audit log, and business state machine concerns in the project.
 
 ## General Rule
 

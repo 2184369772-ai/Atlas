@@ -1,6 +1,6 @@
 {
   "generator": "Atlas Public Packaging v0.1",
-  "public_version": "0.7.0-alpha",
+  "public_version": "1.0.0-alpha",
   "license": "Apache-2.0",
   "release_blocker": null,
   "source_repo": "internal Atlas training/development repository",
@@ -12,6 +12,7 @@
     "packages/file-lifecycle/src/atlas_file_lifecycle",
     "packages/knowledge-intake/src/atlas_knowledge_intake",
     "packages/operation-outcome/src/atlas_operation_outcome",
+    "packages/runtime-config/src/atlas_runtime_config",
     "packages/tabular-input/src/atlas_tabular",
     "examples/ai-execution-synthetic",
     "examples/enterprise-intake-synthetic",

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -11,13 +13,27 @@ from .catalog import get_capability
 SKIP_DIRS = {
     ".git",
     ".idea",
+    ".mypy_cache",
+    ".next",
+    ".npm-cache",
+    ".parcel-cache",
     ".pytest_cache",
+    ".ruff_cache",
+    ".turbo",
     ".venv",
     "__pycache__",
+    "coverage",
     "build",
+    "cache",
+    "generated",
+    "out",
     "dist",
+    "target",
     "node_modules",
+    "vendor",
 }
+MAX_SCAN_FILES = 2_500
+MAX_SCAN_SECONDS = 5.0
 TEXT_EXTENSIONS = {
     ".cfg",
     ".csv",
@@ -126,7 +142,7 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
             ProjectSignal(
                 capability_id="runtime-config",
                 detected_signal="Runtime configuration files or environment-resolution patterns detected.",
-                reason="Runtime Config remains a Candidate. It can guide comparison or adapter design, but should not be treated as a stable package promise.",
+                reason="Runtime Config is shadow-validated but remains REFERENCE_ONLY. Use it for config semantics and comparison; keep framework structure, deployment, and secret management in the project adapter.",
                 confidence="LOW",
             )
         )
@@ -193,12 +209,32 @@ def iter_project_files(root: Path) -> list[Path]:
         return [root]
 
     collected: list[Path] = []
-    for path in root.rglob("*"):
-        if any(part in SKIP_DIRS for part in path.parts):
-            continue
-        if path.is_file():
+    deadline = time.monotonic() + MAX_SCAN_SECONDS
+    for current_root, dirnames, filenames in os.walk(root):
+        dirnames[:] = [
+            dirname
+            for dirname in dirnames
+            if dirname.lower() not in SKIP_DIRS and not is_generated_dir_name(dirname)
+        ]
+        current = Path(current_root)
+        for filename in filenames:
+            if len(collected) >= MAX_SCAN_FILES or time.monotonic() >= deadline:
+                return collected
+            path = current / filename
+            if path.name.lower() in SKIP_DIRS or is_generated_dir_name(path.name):
+                continue
             collected.append(path)
     return collected
+
+
+def is_generated_dir_name(name: str) -> bool:
+    lowered = name.lower()
+    return (
+        lowered.endswith(".egg-info")
+        or lowered.endswith(".dist-info")
+        or lowered in {"tmp", "temp", ".cache"}
+        or "cache" in lowered
+    )
 
 
 def has_tabular_signal(files: list[Path]) -> bool:

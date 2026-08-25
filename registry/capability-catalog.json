@@ -1,5 +1,5 @@
 {
-  "catalog_version": "atlas-public-0.7.0-alpha",
+  "catalog_version": "atlas-public-1.0.0-alpha",
   "capabilities": [
     {
       "id": "ai-execution",
@@ -91,13 +91,13 @@
       "aliases": [
         "runtime config"
       ],
-      "governance_status": "ATLAS CANDIDATE",
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
       "recommendation": "REFERENCE_ONLY",
-      "use_via": "Reference for adapter or project-specific design",
-      "can_use_now": "No",
+      "use_via": "packages/runtime-config with project-side framework adapter",
+      "can_use_now": "Yes, through the shadow-validated reference implementation and caller-owned framework / deployment / secret boundary",
       "reference_only": "Yes",
       "forbidden_as_ready_made_call": "Yes",
-      "notes": "Candidate only. Public distribution does not promote it to a stable runtime package."
+      "notes": "Use this only for config key/spec, source, required/default handling, type conversion, issue expression, effective value provenance, safe public serialization, and Shadow comparison. Spring/Django structures, framework-specific types, config centers, deployment scripts, business defaults, and secret management stay in the project."
     },
     {
       "id": "tabular-core",

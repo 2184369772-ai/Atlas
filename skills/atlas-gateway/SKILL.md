@@ -20,13 +20,13 @@ Atlas Skill v0.1 does not reimplement Atlas. It routes through Atlas Gateway so 
 For a new or unfamiliar software project, first inspect the project through Gateway:
 
 ```powershell
-atlas project inspect <project-path> --json
+python scripts/run_gateway.py project inspect <project-path> --json
 ```
 
 If Atlas may help, build the adoption plan next:
 
 ```powershell
-atlas project plan <project-path> --json
+python scripts/run_gateway.py project plan <project-path> --json
 ```
 
 Use these results before recommending Atlas. If Gateway returns `NO_ATLAS_REUSE`, continue normal project work without adding Atlas-specific layers.
@@ -36,22 +36,24 @@ Use these results before recommending Atlas. If Gateway returns `NO_ATLAS_REUSE`
 Use the runner script in this skill so Atlas can be located safely:
 
 ```powershell
-atlas capability list
-atlas capability show tabular-core
-atlas project inspect <project-path> --json
-atlas project plan <project-path> --json
-atlas adapter init enterprise-intake --target <project-path>
-atlas adapter init ai-execution --target <project-path>
-atlas adapter init knowledge-intake --target <project-path>
-atlas doctor
-atlas file inspect <file>
-atlas context --output ATLAS_CONTEXT.md
+python scripts/run_gateway.py capability list
+python scripts/run_gateway.py capability show tabular-core
+python scripts/run_gateway.py project inspect <project-path> --json
+python scripts/run_gateway.py project plan <project-path> --json
+python scripts/run_gateway.py adapter init enterprise-intake --target <project-path>
+python scripts/run_gateway.py adapter init ai-execution --target <project-path>
+python scripts/run_gateway.py adapter init knowledge-intake --target <project-path>
+python scripts/run_gateway.py doctor
+python scripts/run_gateway.py file inspect <file>
+python scripts/run_gateway.py context --output ATLAS_CONTEXT.md
 ```
 
-If the `atlas` command is not available, try the bundled runner:
+For user-facing shell examples, `atlas ...` is preferred after package installation. Inside the Skill, prefer `python scripts/run_gateway.py ...` because it can locate an Atlas source checkout or installed package without requiring the user's project shell to have `atlas` on PATH.
+
+If the runner is unavailable but `atlas` is installed, the CLI is an acceptable fallback:
 
 ```powershell
-python scripts/run_gateway.py doctor
+atlas doctor
 ```
 
 If neither command can find Atlas Gateway, stop and report the missing location clearly. Do not guess maturity from stale skill text.
@@ -105,7 +107,7 @@ Do not automatically write scaffold files into a user project. Use `adapter init
 When Gateway recommends Tabular reuse for CSV/XLSX understanding, call:
 
 ```powershell
-atlas file inspect <file>
+python scripts/run_gateway.py file inspect <file>
 ```
 
 Atlas only owns general tabular structure and value semantics. The project keeps:
@@ -124,8 +126,6 @@ If you are unsure about Atlas maturity or allowed usage, query Gateway first:
 
 - `python scripts/run_gateway.py capability list`
 - `python scripts/run_gateway.py capability show <capability>`
-- `atlas capability list`
-- `atlas capability show <capability>`
 
 Gateway and the capability catalog are the runtime fact source. This skill text is behavior guidance, not the source of truth for current maturity.
 
@@ -134,7 +134,7 @@ Gateway and the capability catalog are the runtime fact source. This skill text 
 When another AI or GPT needs a short Atlas context, generate it through Gateway:
 
 ```powershell
-atlas context --output ATLAS_CONTEXT.md
+python scripts/run_gateway.py context --output ATLAS_CONTEXT.md
 ```
 
 Keep the result public-safe.
