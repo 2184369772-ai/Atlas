@@ -33,7 +33,7 @@ def test_project_plan_public_knowledge_fixture():
     assert completed.returncode == 0
     payload = json.loads(completed.stdout)
     item = next(entry for entry in payload["recommended_capabilities"] if entry["capability_id"] == "knowledge-intake")
-    assert item["recommendation"] == "REFERENCE_ONLY"
+    assert item["recommendation"] == "CONTROLLED_REUSE"
     assert "embedding/vector DB" in item["project_must_own"]
     assert item["adapter_scaffold_supported"] is True
 
@@ -53,7 +53,7 @@ def test_adapter_init_public_boundary_and_no_overwrite(tmp_path: Path):
 
     assert first.returncode == 0
     payload = json.loads(first.stdout)
-    assert payload["recommendation"] == "REFERENCE_ONLY"
+    assert payload["recommendation"] == "CONTROLLED_REUSE"
     assert any(path.endswith("ai_execution_adapter.py") for path in payload["created_files"])
     assert second.returncode == 1
     assert "Refusing to overwrite" in second.stderr

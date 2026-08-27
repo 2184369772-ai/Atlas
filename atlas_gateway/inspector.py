@@ -4,6 +4,7 @@ import json
 import os
 import time
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +12,7 @@ from .catalog import get_capability
 
 
 SKIP_DIRS = {
+    ".codex_tmp",
     ".git",
     ".idea",
     ".mypy_cache",
@@ -19,17 +21,23 @@ SKIP_DIRS = {
     ".parcel-cache",
     ".pytest_cache",
     ".ruff_cache",
+    ".tox",
     ".turbo",
     ".venv",
     "__pycache__",
     "coverage",
     "build",
     "cache",
+    "collectstatic",
     "generated",
     "out",
     "dist",
     "target",
     "node_modules",
+    "review",
+    "site-packages",
+    "staticfiles",
+    "var",
     "vendor",
 }
 MAX_SCAN_FILES = 2_500
@@ -37,7 +45,9 @@ MAX_SCAN_SECONDS = 5.0
 TEXT_EXTENSIONS = {
     ".cfg",
     ".csv",
+    ".css",
     ".env",
+    ".html",
     ".ini",
     ".java",
     ".js",
@@ -54,6 +64,7 @@ TEXT_EXTENSIONS = {
     ".tsx",
     ".txt",
     ".xml",
+    ".vue",
     ".yaml",
     ".yml",
 }
@@ -67,9 +78,9 @@ class ProjectSignal:
     confidence: str
 
 
-def inspect_project(project_path: str | Path) -> dict[str, Any]:
+def inspect_project(project_path: str | Path, *, max_scan_seconds: float | None = None) -> dict[str, Any]:
     root = Path(project_path).resolve()
-    signals = detect_project_signals(root)
+    signals = detect_project_signals(root, max_scan_seconds=max_scan_seconds)
     if not signals:
         return {
             "project_path": str(root),
@@ -124,8 +135,8 @@ def summarize_overall_recommendation(findings: list[dict[str, Any]]) -> str:
     return max(findings, key=lambda item: priorities[item["recommendation"]])["recommendation"]
 
 
-def detect_project_signals(root: Path) -> list[ProjectSignal]:
-    files = list(iter_project_files(root))
+def detect_project_signals(root: Path, *, max_scan_seconds: float | None = None) -> list[ProjectSignal]:
+    files = list(iter_project_files(root, max_scan_seconds=max_scan_seconds))
     signals: list[ProjectSignal] = []
 
     if has_tabular_signal(files):
@@ -142,7 +153,7 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
             ProjectSignal(
                 capability_id="runtime-config",
                 detected_signal="Runtime configuration files or environment-resolution patterns detected.",
-                reason="Runtime Config is shadow-validated but remains REFERENCE_ONLY. Use it for config semantics and comparison; keep framework structure, deployment, and secret management in the project adapter.",
+                reason="Runtime Config is controlled-reuse effective-config code. Use it for config semantics and comparison; keep framework structure, deployment, and secret management in the project adapter.",
                 confidence="LOW",
             )
         )
@@ -151,7 +162,7 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
             ProjectSignal(
                 capability_id="enterprise-intake",
                 detected_signal="Import preview, row decision, duplicate handling, or import issue patterns detected.",
-                reason="Enterprise Intake is only the middle layer between Tabular Core and project-side writes. Reuse still requires a project adapter and caller-owned persistence boundary.",
+                reason="Enterprise Intake is controlled-reuse middle-layer runtime code between Tabular Core and project-side writes. Reuse still requires a project adapter and caller-owned persistence boundary.",
                 confidence="LOW",
             )
         )
@@ -160,7 +171,16 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
             ProjectSignal(
                 capability_id="ai-execution",
                 detected_signal="AI provider invocation, timeout, structured result, fallback, or escalation patterns detected.",
-                reason="AI Execution is only the execution-result layer around project-owned AI behavior. Reuse still requires a provider adapter and project-owned prompts, persistence, and human workflow.",
+                reason="AI Execution is controlled-reuse execution-result code around project-owned AI behavior. Reuse still requires a provider adapter and project-owned prompts, model strategy, persistence, and human workflow.",
+                confidence="LOW",
+            )
+        )
+    if has_business_rule_modeling_signal(files):
+        signals.append(
+            ProjectSignal(
+                capability_id="business-rule-modeling",
+                detected_signal="Business constraints, warning/blocking decisions, responsibility boundaries, or formal-fact protection patterns detected.",
+                reason="Business Rule Modeling is a reference-level rule-structure capability. Reuse still requires project-owned roles, fields, workflow, RBAC, persistence, and business decisions.",
                 confidence="LOW",
             )
         )
@@ -169,7 +189,7 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
             ProjectSignal(
                 capability_id="knowledge-intake",
                 detected_signal="Knowledge source, version, citation, retrieval evidence, or human-review patterns detected.",
-                reason="Knowledge Intake is only the source/provenance/evidence semantics around project-owned parsers, retrieval, vector stores, prompts, and persistence.",
+                reason="Knowledge Intake is controlled-reuse source/provenance/evidence code around project-owned parsers, retrieval, vector stores, prompts, and persistence.",
                 confidence="LOW",
             )
         )
@@ -178,7 +198,7 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
             ProjectSignal(
                 capability_id="file-lifecycle",
                 detected_signal="Upload/temp/archive/retention style file-handling patterns detected.",
-                reason="File Lifecycle is a reference-level package for file identity, metadata, reference, lifecycle state, retention intent, and file-level issues. Upload, storage, permissions, ImportBatch, and business rules stay project-owned.",
+                reason="File Lifecycle is controlled-reuse file identity and lifecycle code. Upload, storage, permissions, ImportBatch, database transactions, and business rules stay project-owned.",
                 confidence="LOW",
             )
         )
@@ -187,7 +207,16 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
             ProjectSignal(
                 capability_id="operation-outcome",
                 detected_signal="Structured action-result semantics detected.",
-                reason="Operation Outcome is a reference-level result semantics package. Reuse still requires project-side mapping and must not replace API envelopes, workflow, approval, audit, or business state machines.",
+                reason="Operation Outcome is controlled-reuse result semantics code. Reuse still requires project-side mapping and must not replace API envelopes, workflow, approval, audit, or business state machines.",
+                confidence="LOW",
+            )
+        )
+    if has_ui_quality_signal(files):
+        signals.append(
+            ProjectSignal(
+                capability_id="ui-quality-interaction-reliability",
+                detected_signal="Frontend UI files or interaction feedback patterns detected.",
+                reason="UI Quality is a reference-level review capability for basic page and interaction reliability issues. Project teams still own brand, copy, product taste, and business-specific layout.",
                 confidence="LOW",
             )
         )
@@ -204,12 +233,13 @@ def detect_project_signals(root: Path) -> list[ProjectSignal]:
     return signals
 
 
-def iter_project_files(root: Path) -> list[Path]:
+def iter_project_files(root: Path, *, max_scan_files: int | None = None, max_scan_seconds: float | None = None) -> list[Path]:
     if root.is_file():
         return [root]
 
     collected: list[Path] = []
-    deadline = time.monotonic() + MAX_SCAN_SECONDS
+    deadline = time.monotonic() + (MAX_SCAN_SECONDS if max_scan_seconds is None else max_scan_seconds)
+    scan_limit = MAX_SCAN_FILES if max_scan_files is None else max_scan_files
     for current_root, dirnames, filenames in os.walk(root):
         dirnames[:] = [
             dirname
@@ -218,7 +248,7 @@ def iter_project_files(root: Path) -> list[Path]:
         ]
         current = Path(current_root)
         for filename in filenames:
-            if len(collected) >= MAX_SCAN_FILES or time.monotonic() >= deadline:
+            if len(collected) >= scan_limit or time.monotonic() >= deadline:
                 return collected
             path = current / filename
             if path.name.lower() in SKIP_DIRS or is_generated_dir_name(path.name):
@@ -307,6 +337,38 @@ def has_ai_execution_signal(files: list[Path]) -> bool:
     return False
 
 
+def has_business_rule_modeling_signal(files: list[Path]) -> bool:
+    keywords = (
+        "permissiondenied",
+        "validationerror",
+        "can_manage",
+        "canmanage",
+        "can_view",
+        "canview",
+        "permission",
+        "access",
+        "cannot edit",
+        "review_required",
+        "warning",
+        "blocking",
+        "proxy",
+        "formal",
+        "confirmed",
+        "must not",
+        "requires_trace",
+    )
+    for path in files:
+        lower_name = path.name.lower()
+        if any(token in lower_name for token in ("business_loop", "rules", "policy", "validation")):
+            return True
+        content = read_text_if_supported(path)
+        if content:
+            lowered = content.lower()
+            if sum(1 for token in keywords if token in lowered) >= 3:
+                return True
+    return False
+
+
 def has_knowledge_intake_signal(files: list[Path]) -> bool:
     keywords = (
         "knowledge_documents",
@@ -353,6 +415,65 @@ def has_operation_outcome_signal(files: list[Path]) -> bool:
     return False
 
 
+def has_ui_quality_signal(files: list[Path]) -> bool:
+    ui_suffixes = {".css", ".html", ".jsx", ".tsx", ".vue"}
+    frontend_markers = (
+        "react",
+        "vue",
+        "vite",
+        "next",
+        "nuxt",
+        "svelte",
+        "angular",
+        "@vitejs/",
+        "tailwind",
+        "element-plus",
+    )
+    ui_tokens = (
+        "<button",
+        "<form",
+        "<input",
+        "<template",
+        "onclick",
+        "@click",
+        "className=",
+        "aria-",
+        "disabled",
+        "loading",
+        "empty-state",
+        "modal",
+    )
+    layout_tokens = ("@media", "overflow", "height: 100vh", "width:", "display: flex", "display: grid")
+    has_frontend_marker = False
+    ui_evidence_count = 0
+
+    for path in files:
+        lower_name = path.name.lower()
+        suffix = path.suffix.lower()
+        content = read_text_if_supported(path)
+        lowered = content.lower() if content else ""
+
+        if lower_name in {"package.json", "vite.config.ts", "vite.config.js", "next.config.js", "nuxt.config.ts"}:
+            if any(marker in lowered for marker in frontend_markers):
+                has_frontend_marker = True
+
+        if suffix in ui_suffixes and lowered:
+            token_hits = sum(1 for token in ui_tokens if token in lowered)
+            layout_hits = sum(1 for token in layout_tokens if token in lowered)
+            if suffix in {".jsx", ".tsx", ".vue", ".html"} and token_hits >= 1:
+                ui_evidence_count += 2
+            elif suffix == ".css" and layout_hits >= 2:
+                ui_evidence_count += 1
+            elif token_hits + layout_hits >= 2:
+                ui_evidence_count += 1
+
+        if "src" in {part.lower() for part in path.parts} and suffix in {".jsx", ".tsx", ".vue"} and lowered:
+            if any(token in lowered for token in ui_tokens):
+                has_frontend_marker = True
+
+    return has_frontend_marker and ui_evidence_count >= 2
+
+
 def has_cbi001_signal(files: list[Path]) -> bool:
     for path in files:
         lower_name = path.name.lower()
@@ -364,6 +485,7 @@ def has_cbi001_signal(files: list[Path]) -> bool:
     return False
 
 
+@lru_cache(maxsize=5_000)
 def read_text_if_supported(path: Path) -> str | None:
     if path.suffix.lower() not in TEXT_EXTENSIONS:
         return None

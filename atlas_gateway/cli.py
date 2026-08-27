@@ -5,8 +5,6 @@ import json
 import sys
 from pathlib import Path
 
-from atlas_consumer.bridge import inspect_file, result_to_payload
-
 from .adapter_scaffold import init_adapter, to_json as scaffold_to_json
 from .catalog import get_capability, list_capabilities
 from .context_pack import build_context_markdown, write_context
@@ -40,6 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     project_inspect.add_argument("--json", action="store_true", help="Return machine-readable JSON.")
     project_plan = project_subparsers.add_parser("plan", help="Build a conservative Atlas adoption plan for one project path.")
     project_plan.add_argument("project_path", help="Path to the project directory or file.")
+    project_plan.add_argument("--task", help="Optional current task description for task-aware adoption routing.")
     project_plan.add_argument("--json", action="store_true", help="Return machine-readable JSON.")
 
     adapter_parser = subparsers.add_parser("adapter", help="Create project-owned Atlas adapter scaffolds.")
@@ -47,6 +46,12 @@ def build_parser() -> argparse.ArgumentParser:
     adapter_init = adapter_subparsers.add_parser("init", help="Create a minimal project-side adapter scaffold.")
     adapter_init.add_argument("capability", help="Capability id or name.")
     adapter_init.add_argument("--target", required=True, help="Target project path.")
+    adapter_init.add_argument(
+        "--language",
+        default="python",
+        choices=("python", "java"),
+        help="Scaffold language. Default: python. Java v0.1 supports enterprise-intake and operation-outcome.",
+    )
     adapter_init.add_argument("--force", action="store_true", help="Overwrite scaffold files if they already exist.")
     adapter_init.add_argument("--json", action="store_true", help="Return machine-readable JSON.")
 
@@ -60,6 +65,18 @@ def build_parser() -> argparse.ArgumentParser:
     file_inspect.add_argument("--header-row", type=int, default=1, help="Physical header row number, 1-based. Default: 1.")
     file_inspect.add_argument("--max-rows", type=int, help="Maximum number of returned data rows.")
     file_inspect.add_argument("--json", action="store_true", help="Return machine-readable JSON. This is the default output mode.")
+
+    ui_parser = subparsers.add_parser("ui", help="Review basic UI quality and interaction reliability.")
+    ui_subparsers = ui_parser.add_subparsers(dest="command", required=True)
+    ui_review = ui_subparsers.add_parser("review", help="Run a read-only UI quality review for one project path.")
+    ui_review.add_argument("project_path", help="Path to the UI project directory or file.")
+    ui_review.add_argument("--json", action="store_true", help="Return machine-readable JSON. This is the default output mode.")
+    ui_fix = ui_subparsers.add_parser("fix", help="Plan or apply mechanically safe UI fixes.")
+    ui_fix.add_argument("project_path", help="Path to the UI project directory or file.")
+    ui_fix_mode = ui_fix.add_mutually_exclusive_group()
+    ui_fix_mode.add_argument("--dry-run", action="store_true", help="Preview safe fixes without writing files. This is the default.")
+    ui_fix_mode.add_argument("--safe", action="store_true", help="Apply only high-confidence mechanical fixes.")
+    ui_fix.add_argument("--json", action="store_true", help="Return machine-readable JSON. This is the default output mode.")
 
     context_parser = subparsers.add_parser("context", help="Generate a public-safe Atlas context pack.")
     context_parser.add_argument("--output", help="Optional output file path.")
@@ -97,6 +114,8 @@ def main(argv: list[str] | None = None) -> int:
         return run_adapter(args)
     if args.group == "file":
         return run_file(args, parser)
+    if args.group == "ui":
+        return run_ui(args)
     if args.group == "context":
         return run_context(args)
     if args.group == "doctor":
@@ -173,7 +192,7 @@ def run_project(args: argparse.Namespace) -> int:
 
 
 def run_project_plan(args: argparse.Namespace) -> int:
-    payload = build_project_plan(args.project_path)
+    payload = build_project_plan(args.project_path, task=args.task)
     if args.json:
         sys.stdout.write(plan_to_json(payload))
         sys.stdout.write("\n")
@@ -181,6 +200,10 @@ def run_project_plan(args: argparse.Namespace) -> int:
 
     sys.stdout.write(f"Project: {payload['project_path']}\n")
     sys.stdout.write(f"Overall recommendation: {payload['overall_recommendation']}\n")
+    if payload.get("task"):
+        sys.stdout.write(f"Task: {payload['task']}\n")
+        sys.stdout.write(f"Project-level recommendation: {payload['project_overall_recommendation']}\n")
+        sys.stdout.write(f"Task-level decision: {payload['task_overall_decision']}\n")
     sys.stdout.write(f"Reason: {payload['reason']}\n")
     if not payload["recommended_capabilities"]:
         sys.stdout.write("Recommended capabilities: none\n")
@@ -189,7 +212,16 @@ def run_project_plan(args: argparse.Namespace) -> int:
         sys.stdout.write(f"Capability: {item['capability']}\n")
         sys.stdout.write(f"Maturity: {item['maturity']}\n")
         sys.stdout.write(f"Recommendation: {item['recommendation']}\n")
+        if item.get("task_decision"):
+            sys.stdout.write(f"Task decision: {item['task_decision']}\n")
+            sys.stdout.write(f"Task reason: {item['task_reason']}\n")
         sys.stdout.write(f"Adapter scaffold supported: {item['adapter_scaffold_supported']}\n")
+        if item.get("workflow_trigger"):
+            sys.stdout.write(f"Workflow trigger: {item['workflow_trigger']}\n")
+        if item.get("recommended_commands"):
+            sys.stdout.write("Recommended commands:\n")
+            for value in item["recommended_commands"]:
+                sys.stdout.write(f"- {value}\n")
         sys.stdout.write("Atlas owns:\n")
         for value in item["atlas_owns"]:
             sys.stdout.write(f"- {value}\n")
@@ -205,6 +237,14 @@ def run_project_plan(args: argparse.Namespace) -> int:
         sys.stdout.write("Risks / boundary:\n")
         for value in item["risks_and_boundaries"]:
             sys.stdout.write(f"- {value}\n")
+        if item.get("ui_closeout_workflow"):
+            sys.stdout.write("UI closeout workflow:\n")
+            for value in item["ui_closeout_workflow"]:
+                sys.stdout.write(f"- {value}\n")
+        if item.get("visual_recommendations"):
+            sys.stdout.write("Visual recommendations:\n")
+            for value in item["visual_recommendations"]:
+                sys.stdout.write(f"- {value}\n")
 
     sys.stdout.write("\nForbidden capabilities:\n")
     for item in payload["forbidden_capabilities"]:
@@ -214,7 +254,7 @@ def run_project_plan(args: argparse.Namespace) -> int:
 
 def run_adapter(args: argparse.Namespace) -> int:
     try:
-        payload = init_adapter(args.capability, args.target, force=args.force)
+        payload = init_adapter(args.capability, args.target, force=args.force, language=args.language)
     except (FileExistsError, ValueError) as exc:
         sys.stderr.write(f"{exc}\n")
         return 1
@@ -226,6 +266,7 @@ def run_adapter(args: argparse.Namespace) -> int:
 
     sys.stdout.write(f"Status: {payload['status']}\n")
     sys.stdout.write(f"Capability: {payload['capability_id']}\n")
+    sys.stdout.write(f"Language: {payload['language']}\n")
     sys.stdout.write(f"Target: {payload['target']}\n")
     if payload["created_files"]:
         sys.stdout.write("Created files:\n")
@@ -237,6 +278,8 @@ def run_adapter(args: argparse.Namespace) -> int:
 
 
 def run_file(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    from atlas_consumer.bridge import inspect_file, result_to_payload
+
     if args.sheet_name and args.sheet_index != 0:
         parser.error("--sheet-name and non-default --sheet-index cannot be used together.")
     if args.header_row < 1:
@@ -255,6 +298,29 @@ def run_file(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
     sys.stdout.write(json.dumps(result_to_payload(result), ensure_ascii=False, indent=2))
     sys.stdout.write("\n")
     return 0 if not result.errors else 1
+
+
+def run_ui(args: argparse.Namespace) -> int:
+    package_path = Path(__file__).resolve().parents[1] / "packages" / "ui-quality" / "src"
+    if package_path.exists() and str(package_path) not in sys.path:
+        sys.path.insert(0, str(package_path))
+    from atlas_ui_quality import fix_project, review_project
+
+    if args.command == "fix":
+        try:
+            result = fix_project(args.project_path, apply=args.safe)
+        except (FileNotFoundError, UnicodeDecodeError) as exc:
+            sys.stderr.write(f"{exc}\n")
+            return 1
+        sys.stdout.write(json.dumps(result.to_dict(), ensure_ascii=True, indent=2))
+        sys.stdout.write("\n")
+        return 0
+
+    review = review_project(args.project_path)
+    payload = review.to_dict()
+    sys.stdout.write(json.dumps(payload, ensure_ascii=True, indent=2))
+    sys.stdout.write("\n")
+    return 0
 
 
 def run_context(args: argparse.Namespace) -> int:

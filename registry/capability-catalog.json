@@ -1,22 +1,78 @@
 {
-  "catalog_version": "atlas-public-1.0.0-alpha",
+  "catalog_version": "atlas-public-1.1.0-alpha",
   "capabilities": [
     {
       "id": "ai-execution",
       "name": "AI Execution",
       "aliases": [
         "ai execution",
-        "ai result",
-        "provider fallback",
-        "human escalation"
+        "model invocation",
+        "llm execution",
+        "ai result"
+      ],
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
+      "recommendation": "CONTROLLED_REUSE",
+      "use_via": "packages/ai-execution public API with a project-side provider adapter",
+      "can_use_now": "Yes, as controlled runtime reuse for AI execution request/result semantics; caller-owned prompt, provider policy, retry/timeout implementation, and persistence boundary remain mandatory",
+      "reference_only": "No",
+      "forbidden_as_ready_made_call": "No",
+      "notes": "Use this only for execution-result semantics around AI provider calls. Two mature AI project consumers passed direct public API validation through AIExecutionRequest, provider adapter boundary, execute_ai_request, failure normalization, fallback, evidence, confidence/risk, and human escalation. Prompts, RAG, model choice, provider strategy, business rules, persistence, permissions, and human workflow stay in the project."
+    },
+    {
+      "id": "business-rule-modeling",
+      "name": "Business Rule Modeling",
+      "aliases": [
+        "business rule",
+        "business rule modeling",
+        "rule constraint",
+        "responsibility boundary",
+        "formal fact protection"
       ],
       "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
       "recommendation": "REFERENCE_ONLY",
-      "use_via": "packages/ai-execution with a project-side provider adapter",
-      "can_use_now": "Yes, as a reference implementation for execution request/result semantics and normalized failure handling",
+      "use_via": "packages/business-rule-modeling with project-side rule source mapping",
+      "can_use_now": "Yes, through the shadow-validated reference implementation and caller-owned roles, workflow, RBAC, persistence, and business decisions",
       "reference_only": "Yes",
       "forbidden_as_ready_made_call": "Yes",
-      "notes": "Atlas AI Execution covers execution request/result, failure normalization, fallback signal, evidence reference, confidence/risk, human escalation, trace, and outcome. Provider calls, request/response formats, retry/timeout implementation, prompts, model choice, RAG/Knowledge, business rules, and persistence stay in the project adapter. Validated through isolated read-only shadow comparison across multiple real project implementations without implying production model calls."
+      "notes": "Use this only to structure and evaluate business-rule semantics: source/intent, constraint, warning vs blocking, responsibility boundary, human decision, derived suggestion, and formal-fact protection. It does not decide business rules, implement workflow/RBAC, own concrete roles or fields, write databases, or replace ordinary requirement analysis."
+    },
+    {
+      "id": "knowledge-intake",
+      "name": "Knowledge Intake",
+      "aliases": [
+        "knowledge intake",
+        "knowledge evidence",
+        "citation",
+        "retrieval evidence",
+        "source provenance"
+      ],
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
+      "recommendation": "CONTROLLED_REUSE",
+      "use_via": "packages/knowledge-intake public API with a project-side parser/retrieval adapter",
+      "can_use_now": "Yes, as controlled runtime reuse for knowledge source identity, version/status, unit-source linkage, citation/provenance, retrieval evidence, issues/conflicts, and human-review signals; caller-owned parser, retrieval, vector store, prompt, and persistence boundaries remain mandatory",
+      "reference_only": "No",
+      "forbidden_as_ready_made_call": "No",
+      "notes": "Use this only for knowledge source identity, version/status, citation/provenance, retrieval evidence, issue/conflict, and human-review semantics. Two mature knowledge consumers passed direct public API validation without project special cases. It does not parse files, chunk documents, embed text, own a vector DB, rank search results, prompt an LLM, or store business knowledge."
+    },
+    {
+      "id": "dashboard-decision-workspace",
+      "name": "Dashboard / Decision Workspace Semantics",
+      "aliases": [
+        "dashboard",
+        "decision workspace",
+        "workspace",
+        "today workspace",
+        "workbench",
+        "dashboard semantics",
+        "decision dashboard"
+      ],
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
+      "recommendation": "REFERENCE_ONLY",
+      "use_via": "packages/dashboard-decision-workspace with a project-side workspace adapter",
+      "can_use_now": "Yes, through the shadow-validated reference implementation and caller-owned layout, BI, SQL/ORM, workflow, permission, priority, and storage boundary",
+      "reference_only": "Yes",
+      "forbidden_as_ready_made_call": "Yes",
+      "notes": "Use this only for workspace information organization: sections, facts, status, attention, risks, outcomes, actions, reports, priority, freshness/as-of, source references, owner references, pending/resolved state, drill-down targets, and summary/detail boundaries. It does not build BI, Workflow, permissions, notification delivery, UI design systems, SQL/ORM, storage, or business priority rules."
     },
     {
       "id": "enterprise-intake",
@@ -27,12 +83,12 @@
         "import intake"
       ],
       "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
-      "recommendation": "REFERENCE_ONLY",
-      "use_via": "packages/enterprise-intake with a project-side adapter",
-      "can_use_now": "Yes, through the reference implementation and caller-owned persistence boundary",
-      "reference_only": "Yes",
-      "forbidden_as_ready_made_call": "Yes",
-      "notes": "Use this only for the middle intake semantics between Tabular Core and project-side import writes. It is validated through read-only shadow comparison across multiple real projects, but duplicate policy, business validation, persistence, transactions, and DB writes stay in the project."
+      "recommendation": "CONTROLLED_REUSE",
+      "use_via": "packages/enterprise-intake public API with a project-side adapter",
+      "can_use_now": "Yes, as controlled runtime reuse for preview, row decisions, issues, partial completion, and commit readiness; caller-owned persistence boundary remains mandatory",
+      "reference_only": "No",
+      "forbidden_as_ready_made_call": "No",
+      "notes": "Use this only for the middle intake semantics between Tabular Core and project-side import writes. Two mature real-project consumers passed same-input shadow and controlled consumer validation through HookedAdapter and build_preview_with_adapter. Business rules, duplicate policy details, transactions, and database commits stay in the project adapter."
     },
     {
       "id": "file-lifecycle",
@@ -44,29 +100,32 @@
         "retention"
       ],
       "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
-      "recommendation": "REFERENCE_ONLY",
-      "use_via": "packages/file-lifecycle with project-side file/storage adapter",
-      "can_use_now": "Yes, through the shadow-validated reference implementation and caller-owned storage / permission / business boundary",
-      "reference_only": "Yes",
-      "forbidden_as_ready_made_call": "Yes",
-      "notes": "Use this only for file/source identity, metadata, reference, lifecycle state, retention intent, file-level issues, and Shadow comparison. Upload/download, object storage, permissions, ImportBatch, business version rules, approvals, and database transactions stay in the project."
+      "recommendation": "CONTROLLED_REUSE",
+      "use_via": "packages/file-lifecycle public API with project-side file/storage adapter",
+      "can_use_now": "Yes, as controlled runtime reuse for file/source identity, metadata, reference, lifecycle state, retention, issues, transitions, and comparison; caller-owned storage / permission / business boundary remains mandatory",
+      "reference_only": "No",
+      "forbidden_as_ready_made_call": "No",
+      "notes": "Use this only for file/source identity, metadata, reference, lifecycle state, retention intent, file-level issues, transition validation, and Shadow comparison. Two mature real-project file consumers passed direct public API validation without project special cases. Upload/download, object storage, permissions, ImportBatch, business version rules, approvals, and database transactions stay in the project."
     },
     {
-      "id": "knowledge-intake",
-      "name": "Knowledge Intake",
+      "id": "notification-attention-routing",
+      "name": "Notification / Attention Routing",
       "aliases": [
-        "knowledge intake",
-        "knowledge source",
-        "citation provenance",
-        "retrieval evidence"
+        "notification",
+        "attention routing",
+        "attention",
+        "todo",
+        "reminder",
+        "escalation",
+        "pending review"
       ],
       "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
-      "recommendation": "REFERENCE_ONLY",
-      "use_via": "packages/knowledge-intake with a project-side parser/retrieval adapter",
-      "can_use_now": "Yes, as a reference implementation for source identity, source-unit linkage, citation/provenance, retrieval evidence, conflicts, and human-review signal",
-      "reference_only": "Yes",
-      "forbidden_as_ready_made_call": "Yes",
-      "notes": "Atlas Knowledge Intake covers source identity, version/status, knowledge unit to source linkage, citation/provenance, retrieval evidence, issue/conflict, and human-review signal. OCR/parsing, chunking, embedding/vector DB, retrieval/ranking strategy, prompts/LLMs, business knowledge, persistence, and permissions stay in the project. Validated through isolated read-only shadow comparison across multiple real project implementations."
+      "recommendation": "CONTROLLED_REUSE",
+      "use_via": "packages/notification-attention-routing public API with a project-side attention adapter",
+      "can_use_now": "Yes, as controlled runtime reuse for event-triggered attention signals, semantic recipient/audience, level, reason, timing, acknowledgement/resolution/dismissal, escalation, source reference, and repeated-notice dedupe metadata; caller-owned delivery, workflow, permission, scheduling, storage, and business escalation boundaries remain mandatory",
+      "reference_only": "No",
+      "forbidden_as_ready_made_call": "No",
+      "notes": "Use this only for event-triggered attention signals: semantic recipient, level, reason, source reference, due/reminder/repeated-notice metadata, acknowledgement, resolution, dismissal, and escalation state. Two mature attention consumers passed direct public API validation without project special cases. It does not send messages, implement WeCom/email/SMS/Push, own users or organization hierarchy, run workflow, enforce permissions, schedule jobs, store messages, or define business escalation rules."
     },
     {
       "id": "operation-outcome",
@@ -78,12 +137,31 @@
         "review required"
       ],
       "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
-      "recommendation": "REFERENCE_ONLY",
-      "use_via": "packages/operation-outcome with project-side result mapping",
-      "can_use_now": "Yes, through the shadow-validated reference implementation and caller-owned business status / API boundary",
-      "reference_only": "Yes",
-      "forbidden_as_ready_made_call": "Yes",
-      "notes": "Use this only for shared operation-result semantics: status, issues, evidence, affected/remaining scope, confidence/risk, fallback, and human attention. It is not an API envelope, workflow, approval, exception framework, notification, audit log, or business state machine."
+      "recommendation": "CONTROLLED_REUSE",
+      "use_via": "packages/operation-outcome public API with project-side result mapping",
+      "can_use_now": "Yes, as controlled runtime reuse for operation-result semantics; caller-owned business status / API boundary remains mandatory",
+      "reference_only": "No",
+      "forbidden_as_ready_made_call": "No",
+      "notes": "Use this only for shared operation-result semantics: status, issues, evidence, affected/remaining scope, confidence/risk, fallback, and human attention. Mature capability consumers passed direct public API validation without business special cases. It is not an API envelope, workflow, approval, exception framework, notification, audit log, or business state machine."
+    },
+    {
+      "id": "report-export-semantics",
+      "name": "Report / Export Semantics",
+      "aliases": [
+        "report export",
+        "report semantics",
+        "export semantics",
+        "report projection",
+        "planned actual variance",
+        "source trace export"
+      ],
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
+      "recommendation": "CONTROLLED_REUSE",
+      "use_via": "packages/report-export-semantics public API with a project-side report/export adapter",
+      "can_use_now": "Yes, as controlled runtime reuse for source facts, dimensions/grouping, metric roles, planned/actual/variance semantics, report snapshots, issues, export projections, and source trace; caller-owned formulas, SQL/ORM, permissions, pages, and export styling remain mandatory",
+      "reference_only": "No",
+      "forbidden_as_ready_made_call": "No",
+      "notes": "Use this only for source facts, dimensions, metric roles, aggregation declarations, planned/actual/variance semantics, report snapshots, report issues, export projections, and source trace preservation. Two mature report/export consumers passed direct public API validation without project special cases. It does not compute business formulas, implement SQL/ORM or BI tools, own permissions, design pages, style Excel templates, write databases, or define business export fields."
     },
     {
       "id": "runtime-config",
@@ -92,12 +170,12 @@
         "runtime config"
       ],
       "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
-      "recommendation": "REFERENCE_ONLY",
-      "use_via": "packages/runtime-config with project-side framework adapter",
-      "can_use_now": "Yes, through the shadow-validated reference implementation and caller-owned framework / deployment / secret boundary",
-      "reference_only": "Yes",
-      "forbidden_as_ready_made_call": "Yes",
-      "notes": "Use this only for config key/spec, source, required/default handling, type conversion, issue expression, effective value provenance, safe public serialization, and Shadow comparison. Spring/Django structures, framework-specific types, config centers, deployment scripts, business defaults, and secret management stay in the project."
+      "recommendation": "CONTROLLED_REUSE",
+      "use_via": "packages/runtime-config public API with project-side framework adapter",
+      "can_use_now": "Yes, as controlled runtime reuse for config key/spec, effective values, issues, provenance, and secret-safe projection; caller-owned framework / deployment / secret boundary remains mandatory",
+      "reference_only": "No",
+      "forbidden_as_ready_made_call": "No",
+      "notes": "Use this only for config key/spec, source, required/default handling, type conversion, issue expression, effective value provenance, safe public serialization, and Shadow comparison. Two mature real-project config consumers passed direct public API validation without project special cases or secret leakage. Spring/Django structures, framework-specific types, config centers, deployment scripts, business defaults, and secret management stay in the project."
     },
     {
       "id": "tabular-core",
@@ -112,7 +190,42 @@
       "can_use_now": "Yes, within frozen read-only tabular scope",
       "reference_only": "No",
       "forbidden_as_ready_made_call": "No",
-      "notes": "This is the narrowest and most validated Atlas capability. Keep business rules and persistence in the project."
+      "notes": "This is the narrowest and most validated Atlas capability. Reuse must stay inside the frozen Tabular Core boundary."
+    },
+    {
+      "id": "traceability-audit",
+      "name": "Traceability / Audit",
+      "aliases": [
+        "traceability",
+        "audit",
+        "trace chain",
+        "source trace",
+        "audit event"
+      ],
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
+      "recommendation": "CONTROLLED_REUSE",
+      "use_via": "packages/traceability-audit public API with project-side event/source mapping",
+      "can_use_now": "Yes, as controlled runtime reuse for source, actor/producer, event, before/after, reason, evidence/reference, correlation/task id, derived-from, supersedes/replaces, and trace-chain integrity; caller-owned storage, permissions, retention, and business log content remain mandatory",
+      "reference_only": "No",
+      "forbidden_as_ready_made_call": "No",
+      "notes": "Use this only for source identity, actor/producer, timestamp, action/event, before/after change, reason, evidence/reference, correlation/task id, derived-from, superseded/replaced, immutable formal fact, and trace-chain comparison. Two mature trace consumers passed direct public API validation without project special cases. It is not a logging platform, audit-log storage, workflow, RBAC, compliance retention engine, or business audit content library."
+    },
+    {
+      "id": "ui-quality-interaction-reliability",
+      "name": "UI Quality & Interaction Reliability",
+      "aliases": [
+        "ui quality",
+        "interaction reliability",
+        "ui review",
+        "frontend quality"
+      ],
+      "governance_status": "ATLAS CANDIDATE / SHADOW_VALIDATED",
+      "recommendation": "REFERENCE_ONLY",
+      "use_via": "Feature completion or phase acceptance -> atlas ui review <project-path> -> atlas ui fix <project-path> --dry-run -> optional explicit --safe -> Codex visual recommendations -> human final visual judgement",
+      "can_use_now": "Yes, through the shadow-validated review implementation, evidence-backed visual recommendation layer, and conservative safe-fix planner",
+      "reference_only": "Yes",
+      "forbidden_as_ready_made_call": "Yes",
+      "notes": "Use this for UI issue review, evidence-backed visual recommendations, high-confidence mechanical fixes, and the UI closeout workflow. Visual guidance covers action hierarchy, wide-table readability, responsive representation, form grouping, metadata density, and technical-detail disclosure. Safe fixes remain limited to identifiable accessible labels, existing loading guards, bounded fixed widths, and standalone viewport-height safety. Brand, colors, business priority, relevance thresholds, special layout, product taste, and final aesthetic judgement stay project-owned. Atlas does not train or apply automatic aesthetic modification in this capability."
     }
   ]
 }

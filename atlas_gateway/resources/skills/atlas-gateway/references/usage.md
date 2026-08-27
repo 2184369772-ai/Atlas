@@ -49,6 +49,26 @@ Supported scaffolds:
 
 The scaffold is project-owned. It must not generate business fields, prompts, SQL, database writes, permissions, RAG strategy, or real business rules.
 
+## Scenario D: UI Closeout
+
+Expected chain:
+
+```text
+function complete / phase acceptance / UI closeout
+-> project inspect
+-> project plan
+-> UI Quality & Interaction Reliability if real frontend/UI code is detected
+-> ui review
+-> ui fix --dry-run
+-> explicit authorization before safe fixes
+-> Codex handles visual recommendations
+-> human final aesthetic confirmation
+```
+
+Do not suggest UI Quality for projects without real frontend/UI code. Do not
+run `ui fix --safe` without explicit authorization. `BUSINESS_JUDGMENT` remains
+manual and project-owned.
+
 ## Maturity Discipline
 
 - `REFERENCE_ONLY` stays Candidate-only.

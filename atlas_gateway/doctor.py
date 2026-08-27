@@ -15,10 +15,16 @@ PACKAGE_PATHS = {
     "atlas_tabular": REPO_ROOT / "packages" / "tabular-input" / "src",
     "atlas_enterprise_intake": REPO_ROOT / "packages" / "enterprise-intake" / "src",
     "atlas_ai_execution": REPO_ROOT / "packages" / "ai-execution" / "src",
+    "atlas_business_rule_modeling": REPO_ROOT / "packages" / "business-rule-modeling" / "src",
+    "atlas_decision_workspace": REPO_ROOT / "packages" / "dashboard-decision-workspace" / "src",
     "atlas_file_lifecycle": REPO_ROOT / "packages" / "file-lifecycle" / "src",
     "atlas_knowledge_intake": REPO_ROOT / "packages" / "knowledge-intake" / "src",
+    "atlas_attention_routing": REPO_ROOT / "packages" / "notification-attention-routing" / "src",
     "atlas_operation_outcome": REPO_ROOT / "packages" / "operation-outcome" / "src",
+    "atlas_report_export": REPO_ROOT / "packages" / "report-export-semantics" / "src",
     "atlas_runtime_config": REPO_ROOT / "packages" / "runtime-config" / "src",
+    "atlas_traceability_audit": REPO_ROOT / "packages" / "traceability-audit" / "src",
+    "atlas_ui_quality": REPO_ROOT / "packages" / "ui-quality" / "src",
 }
 
 
