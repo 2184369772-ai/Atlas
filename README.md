@@ -1,159 +1,105 @@
 # Atlas
 
+> Atlas helps AI coding tools decide when proven engineering contracts can be
+> reused instead of redesigning the same patterns from scratch.
+
 Atlas is a software engineering reuse framework for developers and AI/Codex.
-It scans a project, checks whether existing Atlas capabilities are worth using,
-and gives a task-aware adoption plan. When Atlas is not useful, it says
-`NO_ATLAS_REUSE` instead of forcing a dependency.
+It scans a project and the current task, then recommends a controlled package,
+a reference contract, project-level awareness, or `NO_ATLAS_REUSE`.
 
-Atlas 是给开发者和 AI/Codex 使用的软件工程复用框架。它不只判断“这个项目
-有没有 Atlas 相关能力”，还会判断“当前任务值不值得接 Atlas”。
+Atlas 是给开发者和 AI/Codex 使用的软件工程复用框架。它帮助你判断当前任务
+是否值得复用已有工程契约，而不是每次从零重新设计；不合适时会明确退出。
 
-Current public package version: `1.1.0-alpha`
+**Why not ask Codex to build everything from scratch?** Codex is still the
+developer. Atlas gives it governed contracts and boundaries for recurring
+engineering problems, so the project can keep its own business rules while
+avoiding unnecessary redesign.
 
-License: `Apache-2.0`
+Best fits: structured Excel/CSV intake, normalized execution outcomes,
+knowledge provenance, file/config lifecycle, traceability, exports, and
+attention routing. Atlas is still `1.1.0-alpha`: use it on bounded tasks and
+review every adoption decision.
 
-## Quick Start
+## Try Atlas In 5 Minutes
 
 ```bash
+git clone https://github.com/2184369772-ai/Atlas.git
 pip install git+https://github.com/2184369772-ai/Atlas.git
-
 atlas doctor
-atlas capability list
-
-cd your-project
-atlas project inspect .
-atlas project plan . --task "current development task"
+cd Atlas/examples/enterprise-intake-synthetic
+atlas project plan . --task "add Excel import preview with row decisions"
+python run_example.py
 ```
 
-Codex users can install the Atlas Skill:
+Expected plan, simplified:
+
+```text
+TASK_REUSE
+- Tabular Core
+- Enterprise Intake
+```
+
+The example then prints row decisions, issues, partial completion, and commit
+readiness without writing a database. In your own project, run the same plan
+command from the project root. Only generate an adapter after reviewing the
+boundary:
 
 ```bash
-atlas skill install
-atlas skill status
+atlas adapter init enterprise-intake --target your-project
 ```
 
-Then open a new Codex task and describe your normal development request.
-The Skill helps Codex query Atlas Gateway when the task is suitable. It does
-not guarantee every session will auto-trigger, and Atlas never forces every
-project to use Atlas.
+Atlas also knows when to stay out:
+
+```bash
+cd ../no-atlas-reuse
+atlas project plan . --task "update README wording"
+```
+
+Expected: `NO_ATLAS_REUSE`. A project can also return `PROJECT_RELEVANT` when
+Atlas may fit the repository but should not be adopted for the current task.
+
+中文快速说明：安装后先运行 `atlas doctor`，再在项目目录执行
+`atlas project plan . --task "当前开发任务"`。只有返回 `TASK_REUSE` 时才考虑
+直接接入；`TASK_REFERENCE` 只参考契约；`PROJECT_RELEVANT` 或
+`NO_ATLAS_REUSE` 时继续正常开发即可。
+
+## Understand The Decision
+
+| Decision | What to do |
+| --- | --- |
+| `TASK_REUSE` | Reuse the named controlled package/API/adapter and keep project-owned hooks. |
+| `TASK_REFERENCE` | Read the contract and boundary; implement inside the project. |
+| `PROJECT_RELEVANT` | Atlas may fit another task in this repository; do not adopt it now. |
+| `NO_ATLAS_REUSE` | Continue without Atlas. This is a successful routing result. |
+
+Atlas does not call an LLM to make this decision and does not upload or collect
+your repository, source code, task text, or project data.
 
 ## What Atlas Can Help With
 
-### Project And Task Analysis
-
-- Scan a software project for Atlas-relevant signals.
-- Distinguish project-level relevance from current-task reuse.
-- Produce an adoption plan with capability maturity, project-owned work, adapter hooks, and boundaries.
-- Return `NO_ATLAS_REUSE` when Atlas does not help.
-
-Task-aware routing:
-
-```bash
-atlas project plan . --task "add Excel import preview with row decisions"
-```
-
-Task decisions:
-
-- `TASK_REUSE`: the current task should use a controlled Atlas package, API, adapter, or bridge.
-- `TASK_REFERENCE`: Atlas semantics are useful as reference, but implementation stays project-owned.
-- `PROJECT_RELEVANT`: the project has Atlas-relevant patterns, but the current task should not adopt Atlas.
-- `NO_ATLAS_REUSE`: no useful Atlas reuse for this project or task.
-
-### Tabular / Excel / CSV
-
-- CSV/XLSX structured reading.
-- Workbook, sheet, header, row, and cell semantics.
-- Structural issues and warnings.
-- Pre-processing before complex spreadsheet import flows.
-
-### Enterprise Intake
-
-- Preview and dry-run semantics.
-- Row-level `ACCEPT`, `SKIP`, `REJECT`, and `REVIEW`.
-- Partial completion and commit readiness.
-- Adapter boundary for business validation, duplicate policy, persistence, transaction, and DB writes.
-
-### AI Execution
-
-- Execution request/result semantics.
-- Provider failure, timeout, invalid-result normalization.
-- Fallback signal, evidence reference, confidence/risk, and human escalation.
-- Project-owned prompt, model choice, provider calls, retry/timeout, RAG, business rules, and persistence.
-
-### Knowledge Intake
-
-- Knowledge source identity, version, and status.
-- Knowledge unit to source linkage.
-- Citation/provenance, retrieval evidence, conflicts, and human-review signal.
-- Project-owned parser/OCR, chunking, embeddings/vector DB, retrieval/ranking, prompt/LLM, permissions, and persistence.
-
-### Operation Outcome
-
-- Shared operation-result status.
-- Issues, affected scope, remaining scope, evidence, confidence/risk, fallback, and human attention.
-- Not an API envelope, workflow engine, approval platform, exception framework, notification system, audit log, or business state machine.
-
-### File Lifecycle
-
-- File/source identity, metadata, reference, lifecycle state, retention intent, issues, and transition checks.
-- Project-owned upload/download, storage, permissions, approvals, business version rules, and database transactions.
-
-### Runtime Config
-
-- Config key/spec, effective values, issue expression, provenance, safe public serialization, and config comparison.
-- Project-owned framework integration, deployment, config center, business defaults, and secret management.
-
-### Traceability / Audit
-
-- Source identity, actor/producer, timestamp, event/change, before/after, reason, evidence/reference, correlation/task id, and trace-chain integrity.
-- Not a logging platform, audit-log database, RBAC system, compliance retention engine, or business audit content library.
-
-### Report / Export Semantics
-
-- Source facts, dimensions, metric roles, planned/actual/variance semantics, report snapshots, export projections, issues, and source trace.
-- Project-owned formulas, SQL/ORM, BI, permissions, page design, Excel styling, and export fields.
-
-### Notification / Attention Routing
-
-- Event-triggered attention semantics: audience, level, reason, source reference, due/reminder metadata, acknowledgement, resolution, dismissal, escalation, and dedupe metadata.
-- Project-owned delivery, users/org structure, workflow, permissions, scheduling, storage, and business escalation rules.
-
-### Java Cross-language Bridge v0.1
-
-Atlas can generate Java scaffold from Atlas contracts for selected capabilities:
-
-```bash
-atlas adapter init enterprise-intake --target your-java-project --language java
-atlas adapter init operation-outcome --target your-java-project --language java
-```
-
-Boundary:
-
-- Java runtime does not depend on Python or the Atlas CLI after scaffold generation.
-- Current Java bridge only supports Enterprise Intake and Operation Outcome.
-- It is not a complete Java Atlas framework.
-- Generated scaffold contains contract/semantic structures and TODO hooks, not business fields, SQL, DB writes, permissions, prompts, or business rules.
-
-### Codex Skill
-
-After installing the Skill, Codex can use Gateway for suitable software
-engineering tasks:
-
-```text
-project inspect
--> project plan --task "current task"
--> adapter init only when the task explicitly needs Atlas adoption
--> normal project development
-```
-
-The Skill accepts `NO_ATLAS_REUSE`. It should not write scaffold into a project
-unless the user task explicitly asks to connect Atlas.
+- **Project and task analysis:** inspect a repository, route the current task,
+  and show Atlas-owned versus project-owned work.
+- **Tabular / Excel / CSV:** workbook, sheet, header, row, cell, value, issue,
+  and warning semantics.
+- **Enterprise Intake:** preview, row decisions, issues, partial completion,
+  duplicate/idempotency boundary, and commit readiness.
+- **AI Execution:** request/result, provider failure normalization, fallback,
+  evidence, confidence/risk, escalation, trace, and outcome.
+- **Knowledge Intake:** source identity, version/status, source linkage,
+  citation/provenance, retrieval evidence, conflict, and review signals.
+- **Operation Outcome:** status, issue, affected/remaining scope, evidence,
+  confidence/risk, fallback, and human attention.
+- **File Lifecycle / Runtime Config:** governed lifecycle and effective-config
+  semantics while storage, deployment, secrets, and persistence stay local.
+- **Traceability / Audit, Report / Export, Attention Routing:** reusable
+  engineering semantics without replacing project workflow, RBAC, BI, or delivery.
+- **Project Adoption:** `project inspect`, task-aware `project plan`, bounded
+  adapter scaffolds, and explicit `NO_ATLAS_REUSE`.
 
 ## Capability Maturity
 
 `CONTROLLED_REUSE` means a governed reuse path exists. It does not mean a Stable
-Framework Module, and it does not remove the project-owned adapter/business
-boundary.
+Framework Module and it never removes the project-owned adapter/business boundary.
 
 | Capability | Public maturity / recommendation |
 | --- | --- |
@@ -171,19 +117,48 @@ boundary.
 | Dashboard / Decision Workspace | `SHADOW_VALIDATED / REFERENCE_ONLY` |
 | UI Quality & Interaction Reliability | `SHADOW_VALIDATED / REFERENCE_ONLY` |
 
-Data Model Evolution remains outside the public capability catalog.
+Data Model Evolution is not part of the public capability catalog.
 
-## When Not To Use Atlas
+## Python And Java Quickstarts
 
-Do not adopt Atlas just because a repository contains Excel files, config files,
-reports, uploads, dashboards, or UI code. Local bug fixes, permission closeout,
-minor compatibility fixes, and existing approval-page edits often produce
-`PROJECT_RELEVANT` or `NO_ATLAS_REUSE`.
+The Python quickstart is the same synthetic Enterprise Intake example used in
+the 5-minute path:
+
+```bash
+python examples/enterprise-intake-synthetic/run_example.py
+```
+
+The Java bridge quickstart generates and compiles project-local scaffold for
+the two supported capabilities:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File examples/java-bridge-quickstart/run.ps1
+```
+
+```bash
+bash examples/java-bridge-quickstart/run.sh
+```
+
+Java runtime does not depend on Python or Atlas after generation. Java Bridge
+v0.1 only supports Enterprise Intake and Operation Outcome; it is not a complete
+Java Atlas framework. The generated scaffold contains contract structures and
+TODO hooks, never business fields, SQL, DB writes, permissions, prompts, or
+business rules.
+
+## Codex Skill
+
+```bash
+atlas skill install
+atlas skill status
+```
+
+Then open a new Codex task and describe your normal development request. The
+Skill helps Codex query Atlas Gateway when suitable. It does not guarantee every
+session will auto-trigger or hot-load, and it never forces Atlas into every project.
 
 ## Common Commands
 
 ```bash
-atlas setup
 atlas doctor
 atlas capability list
 atlas capability show enterprise-intake
@@ -198,29 +173,28 @@ atlas skill status
 atlas skill uninstall
 ```
 
-## Atlas Is Not
+## When Not To Use Atlas
 
-Atlas is not:
+Do not adopt Atlas merely because a repository contains Excel files, config,
+reports, uploads, dashboards, or UI. Local bug fixes, permissions, minor
+compatibility fixes, and existing page edits often produce `PROJECT_RELEVANT`
+or `NO_ATLAS_REUSE`.
 
-- a universal AI coding agent
-- a platform that automatically generates complete systems
-- a system that learns private code
-- a Workflow/Auth/RBAC platform
-- a RAG platform
-- a BI/dashboard platform
-- a complete Java framework
-- a framework that must be used in every project
+Atlas is not a universal AI coding agent, full-system generator, private-code
+learning system, Workflow/Auth/RBAC platform, RAG platform, BI platform, or a
+framework every project must use.
 
-## Public Safety
+## External Beta
 
-This public alpha contains public-safe code, synthetic examples, public-safe
-tests, and capability boundaries. It may state that capabilities were validated
-through isolated read-only comparison across multiple real project
-implementations, but this repository does not include private project names,
-company evidence, private paths, prompts, credentials, internal provenance, or
-real project source code.
+Read [External Beta Guide](docs/external-beta.md) before trying Atlas on a real
+task. Feedback is welcome through the GitHub Issue templates. Never attach
+private source code, secrets, databases, internal paths, company data, or other
+sensitive material to a public Issue.
 
-## Packaging Note
+This public alpha contains synthetic examples and public-safe boundaries. It
+does not contain private project identities, evidence, credentials, internal
+provenance, or real project source code.
 
-This repository is the public distribution. It does not carry private
-development history.
+## License
+
+Apache-2.0

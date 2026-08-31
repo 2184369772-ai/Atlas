@@ -6,3 +6,4 @@ __pycache__/
 build/
 dist/
 ATLAS_CONTEXT.md
+examples/java-bridge-quickstart/generated/

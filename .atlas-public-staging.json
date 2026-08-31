@@ -24,6 +24,8 @@
     "examples/enterprise-intake-synthetic",
     "examples/file-lifecycle-synthetic",
     "examples/knowledge-intake-synthetic",
+    "examples/java-bridge-quickstart",
+    "examples/no-atlas-reuse",
     "examples/operation-outcome-synthetic",
     "skills/atlas-gateway",
     "tests/test_ai_execution_public.py",
