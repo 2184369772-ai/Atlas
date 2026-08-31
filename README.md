@@ -20,6 +20,8 @@ knowledge provenance, file/config lifecycle, traceability, exports, and
 attention routing. Atlas is still `1.1.0-alpha`: use it on bounded tasks and
 review every adoption decision.
 
+**Demo:** [Run the reproducible 60-second walkthrough](docs/demo-script.md).
+
 ## Try Atlas In 5 Minutes
 
 ```bash

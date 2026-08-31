@@ -25,6 +25,7 @@
     "examples/file-lifecycle-synthetic",
     "examples/knowledge-intake-synthetic",
     "examples/java-bridge-quickstart",
+    "examples/launch-demo",
     "examples/no-atlas-reuse",
     "examples/operation-outcome-synthetic",
     "skills/atlas-gateway",
