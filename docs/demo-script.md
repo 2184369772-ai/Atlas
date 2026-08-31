@@ -3,6 +3,8 @@
 This demo is synthetic, public-safe, and reproducible from a fresh clone. It
 does not call an LLM, write a database, or inspect a private project.
 
+[Watch the final 38-second terminal demo](launch/assets/demo.gif).
+
 ## Run It
 
 From the Atlas repository root after installation:

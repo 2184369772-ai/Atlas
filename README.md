@@ -20,7 +20,10 @@ knowledge provenance, file/config lifecycle, traceability, exports, and
 attention routing. Atlas is still `1.1.0-alpha`: use it on bounded tasks and
 review every adoption decision.
 
-**Demo:** [Run the reproducible 60-second walkthrough](docs/demo-script.md).
+**Demo:** [Watch the 38-second terminal demo](docs/launch/assets/demo.gif) or
+[run the reproducible walkthrough](docs/demo-script.md).
+
+[![Atlas task-aware adoption demo](docs/launch/assets/demo.gif)](docs/demo-script.md)
 
 ## Try Atlas In 5 Minutes
 
